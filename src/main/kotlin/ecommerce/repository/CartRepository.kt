@@ -2,9 +2,14 @@ package ecommerce.repository
 
 import ecommerce.dto.CartItemResponse
 import ecommerce.exception.NotFoundException
+import ecommerce.model.Cart
 import ecommerce.model.CartItem
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Repository
+
+@Repository
+interface CartRepositoryJPA : JpaRepository<Cart, Long>
 
 @Repository
 class CartRepository(private val jdbcClient: JdbcClient) {
