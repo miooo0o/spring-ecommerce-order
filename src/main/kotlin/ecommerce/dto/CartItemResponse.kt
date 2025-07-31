@@ -1,7 +1,6 @@
 package ecommerce.dto
 
-import ecommerce.model.CartItem
-import ecommerce.model.Product
+import ecommerce.model.*
 
 class CartItemResponse(
     var quantity: Long,
@@ -12,6 +11,31 @@ class CartItemResponse(
 ) {
     fun toCartItem(): CartItem {
         val product = Product(productId, productName, productPrice, productImageUrl)
-        return CartItem(product, quantity.toInt())
+        val cart = mockCart(productId)
+
+        return CartItem(
+            id = CartItemId(),
+            cart = cart,
+            product = product,
+            quantity.toInt()
+        )
+    }
+
+    companion object {
+        fun mockCart(productId: Long): Cart {
+            return Cart(
+                id = null,
+                member = mockMember(productId)
+            )
+        }
+
+        fun mockMember(productId: Long): Member {
+            return Member(
+                productId,
+                "mock@me.com",
+                "",
+                Role.USER.name
+            )
+        }
     }
 }
