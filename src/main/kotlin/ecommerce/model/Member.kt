@@ -18,16 +18,12 @@ class Member(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-
     @Column(name = "email", nullable = false)
-    val email: String, // TODO: Email
-
+    val email: String,
     @Column(name = "name", nullable = false)
     val name: String = "",
-
     @Column(name = "password", nullable = false)
     val password: String,
-
     @Column(name = "role", nullable = false)
     val role: String = Role.USER.name,
 ) {

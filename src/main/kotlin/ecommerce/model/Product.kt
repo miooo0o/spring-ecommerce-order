@@ -13,7 +13,6 @@ class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-
     @Column(name = "name", nullable = false)
     var name: String,
     @Column(name = "price", nullable = false)

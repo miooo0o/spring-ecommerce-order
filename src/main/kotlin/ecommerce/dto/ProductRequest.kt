@@ -18,6 +18,6 @@ data class ProductRequest(
     var imageUrl: String = "",
 ) {
     fun toProduct(): Product {
-        return Product( null,this.name, this.price, this.imageUrl)
+        return Product(null, this.name, this.price, this.imageUrl)
     }
 }
