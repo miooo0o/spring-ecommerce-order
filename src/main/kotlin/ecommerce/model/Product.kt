@@ -10,15 +10,16 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "products")
 class Product(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+
     @Column(name = "name", nullable = false)
     var name: String,
     @Column(name = "price", nullable = false)
     var price: Double, // to BigDecimal(10, 2)
     @Column(name = "image_url", nullable = false)
     var imageUrl: String,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this == other) return true
