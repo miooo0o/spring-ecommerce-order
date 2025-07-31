@@ -23,7 +23,7 @@ class AuthService(
         if (member == null) {
             throw NotFoundException("Member not found")
         }
-        return member.toMemberDto()
+        return member.toRegisteredMember()
     }
 
     fun findAdminMember(email: String): RegisteredMember {

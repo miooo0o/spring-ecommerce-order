@@ -72,7 +72,7 @@ class CartE2ETest {
             "sandra@email.com",
             "sandra",
             "MyPassword",
-            Role.USER.toString(),
+            Role.USER.name,
         )
 
         val splitUpAttributes: List<Array<String>> =
