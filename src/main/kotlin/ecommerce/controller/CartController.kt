@@ -32,8 +32,9 @@ class CartController(private val cartService: CartService) {
         @LoginMember member: RegisteredMember,
         @RequestBody request: CartItemRequest,
     ): ResponseEntity<CartItemResponse> {
-        val cartItemResponse = cartService.addItem(member.id, request)
-        return ResponseEntity.created(URI("/api/cart/items/${cartItemResponse.productId}")).body(cartItemResponse)
+        val cartItem = cartService.addItem(member.id, request)
+        val response = cartItem.toResponse()
+        return ResponseEntity.created(URI("/api/cart/items/${response.productId}")).body(response)
     }
 
     @DeleteMapping
@@ -41,10 +42,11 @@ class CartController(private val cartService: CartService) {
         @LoginMember member: RegisteredMember,
         @RequestBody request: CartItemRequest,
     ): ResponseEntity<CartItemResponse?> {
-        val cartItemResponse = cartService.deleteItem(member.id, request)
-        if (cartItemResponse == null) {
+        val cartItem = cartService.deleteItem(member.id, request)
+        if (cartItem == null) {
             return ResponseEntity.noContent().build()
         }
-        return ResponseEntity.ok().body(cartItemResponse)
+        val response = cartItem.toResponse()
+        return ResponseEntity.ok().body(response)
     }
 }

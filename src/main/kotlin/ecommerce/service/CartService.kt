@@ -2,8 +2,8 @@ package ecommerce.service
 
 import ecommerce.dto.AllCartItemsResponse
 import ecommerce.dto.CartItemRequest
-import ecommerce.dto.CartItemResponse
 import ecommerce.exception.NotFoundException
+import ecommerce.model.CartItem
 import ecommerce.repository.CartRepository
 import ecommerce.repository.ProductRepository
 import org.springframework.stereotype.Service
@@ -22,7 +22,7 @@ class CartService(
     fun addItem(
         memberId: Long,
         request: CartItemRequest,
-    ): CartItemResponse {
+    ): CartItem {
         val cartId = cartRepository.findOrCreateCartId(memberId)
         if (!productRepository.existsById(request.productId)) {
             throw NotFoundException("Product with ${request.productId} not found")
@@ -33,7 +33,7 @@ class CartService(
     fun deleteItem(
         memberId: Long,
         request: CartItemRequest,
-    ): CartItemResponse? {
+    ): CartItem? {
         val cartId = cartRepository.findOrCreateCartId(memberId)
         if (!productRepository.existsById(request.productId)) {
             throw NotFoundException("Product with ${request.productId} not found")

@@ -2,6 +2,7 @@ package ecommerce.repository
 
 import ecommerce.dto.CartItemResponse
 import ecommerce.exception.NotFoundException
+import ecommerce.model.CartItem
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Repository
 
@@ -11,7 +12,7 @@ class CartRepository(private val jdbcClient: JdbcClient) {
         productId: Long,
         productQuantity: Long,
         cartId: Long,
-    ): CartItemResponse {
+    ): CartItem {
         val updateSql =
             """
             UPDATE cart_items
@@ -52,7 +53,7 @@ class CartRepository(private val jdbcClient: JdbcClient) {
         productId: Long,
         quantity: Long,
         cartId: Long,
-    ): CartItemResponse? {
+    ): CartItem? {
         val currentQuantity = quantityInCart(productId, cartId)
         var updateQuantity: Long = quantity
         if (currentQuantity - updateQuantity < 0) {
@@ -182,7 +183,7 @@ class CartRepository(private val jdbcClient: JdbcClient) {
     fun showItem(
         cartId: Long,
         productId: Long,
-    ): CartItemResponse? {
+    ): CartItem? {
         val joinedSql =
             """
             SELECT 
@@ -196,11 +197,13 @@ class CartRepository(private val jdbcClient: JdbcClient) {
             WHERE ci.cart_id = ? AND ci.product_id = ?
             """.trimIndent()
 
-        return jdbcClient
-            .sql(joinedSql)
-            .params(cartId, productId)
-            .query(CartItemResponse::class.java)
-            .optional()
-            .orElse(null)
+        val rawData =
+            jdbcClient
+                .sql(joinedSql)
+                .params(cartId, productId)
+                .query(CartItemResponse::class.java)
+                .optional()
+                .orElse(null)
+        return rawData.toCartItem()
     }
 }
