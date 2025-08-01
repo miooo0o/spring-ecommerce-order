@@ -2,7 +2,8 @@ package ecommerce
 
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.TokenRequest
-import ecommerce.repository.ProductRepository
+import ecommerce.repository.ProductRepositoryJDBC
+import ecommerce.repository.ProductRepositoryJPA
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
@@ -18,7 +19,7 @@ import org.springframework.test.annotation.DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ProductControllerTest {
     @Autowired
-    private lateinit var productRepository: ProductRepository
+    private lateinit var productRepository: ProductRepositoryJPA
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
@@ -27,8 +28,6 @@ class ProductControllerTest {
 
     @BeforeEach
     fun setUp() {
-        productRepository = ProductRepository(jdbcTemplate)
-
         jdbcTemplate.execute("DROP TABLE IF EXISTS cart_items")
         jdbcTemplate.execute("DROP TABLE IF EXISTS carts")
         jdbcTemplate.execute("DROP TABLE products IF EXISTS")
@@ -83,7 +82,7 @@ class ProductControllerTest {
 
     @Test
     fun read() {
-        val products = productRepository.findAllProducts()
+        val products = productRepository.findAll()
         assertThat(products.size).isEqualTo(4)
     }
 

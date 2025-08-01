@@ -4,21 +4,23 @@ import ecommerce.dto.ProductRequest
 import ecommerce.exception.ConflictException
 import ecommerce.exception.NotFoundException
 import ecommerce.model.Product
-import ecommerce.repository.ProductRepository
+import ecommerce.repository.ProductRepositoryJDBC
+import ecommerce.repository.ProductRepositoryJPA
 import org.springframework.stereotype.Service
 
 @Service
-class ProductService(private val productRepository: ProductRepository) {
+class ProductService(private val productRepository: ProductRepositoryJPA) {
     fun create(productRequest: ProductRequest): Long {
         if (productRepository.existsByName(productRequest.name)) {
             throw ConflictException("Product with name ${productRequest.name} already exists")
         }
-        val id = productRepository.insertWithKeyHolder(productRequest.toProduct())
-        return id
+        val product = productRepository.save(productRequest.toProduct())
+        return product.id
+            ?: throw NotFoundException("Product with name ${productRequest.name} not found")
     }
 
     fun read(): List<Product> {
-        val products = productRepository.findAllProducts()
+        val products = productRepository.findAll()
         return products
     }
 
@@ -30,15 +32,11 @@ class ProductService(private val productRepository: ProductRepository) {
             create(updateRequest)
             return true
         }
-        if (!productRepository.update(updateRequest.toProduct(), id)) {
-            throw NotFoundException()
-        }
+        productRepository.save(updateRequest.toProduct(id))
         return false
     }
 
     fun delete(id: Long) {
-        if (!productRepository.delete(id)) {
-            throw NotFoundException()
-        }
+        productRepository.deleteById(id)
     }
 }

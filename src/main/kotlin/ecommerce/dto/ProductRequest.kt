@@ -17,7 +17,7 @@ data class ProductRequest(
     @field:Pattern(regexp = "^https?://.*", message = "URL must start with https:// or http://")
     var imageUrl: String = "",
 ) {
-    fun toProduct(): Product {
-        return Product(null, this.name, this.price, this.imageUrl)
+    fun toProduct(id: Long? = null): Product {
+        return Product(id, this.name, this.price, this.imageUrl)
     }
 }

@@ -5,13 +5,14 @@ import ecommerce.dto.CartItemRequest
 import ecommerce.exception.NotFoundException
 import ecommerce.model.CartItem
 import ecommerce.repository.CartRepository
-import ecommerce.repository.ProductRepository
+import ecommerce.repository.ProductRepositoryJDBC
+import ecommerce.repository.ProductRepositoryJPA
 import org.springframework.stereotype.Service
 
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
+    private val productRepository: ProductRepositoryJPA,
 ) {
     fun getAllItems(memberId: Long): AllCartItemsResponse {
         val cartId = cartRepository.findOrCreateCartId(memberId)
