@@ -4,7 +4,6 @@ import ecommerce.dto.ProductRequest
 import ecommerce.exception.ConflictException
 import ecommerce.exception.NotFoundException
 import ecommerce.model.Product
-import ecommerce.repository.ProductRepositoryJDBC
 import ecommerce.repository.ProductRepositoryJPA
 import org.springframework.stereotype.Service
 

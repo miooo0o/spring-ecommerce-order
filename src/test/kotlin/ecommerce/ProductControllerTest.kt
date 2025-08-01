@@ -2,7 +2,6 @@ package ecommerce
 
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.TokenRequest
-import ecommerce.repository.ProductRepositoryJDBC
 import ecommerce.repository.ProductRepositoryJPA
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
