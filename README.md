@@ -43,8 +43,6 @@ Goal: Transform Repository and entities using Spring Data JPA.
   - [ ] @BeforeEach setup -> init
   - [ ] Use given() from Mockito
 - [ ] Optional, but effective: Create InMemory fake repos -> service uses the fake repos
-- [ ] 
-
 
 ## Step 1-2 - Pagination
 Goal: Implement pagination for both the product list and the wishlist view.
