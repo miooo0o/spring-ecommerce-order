@@ -5,7 +5,6 @@ import ecommerce.dto.CartItemRequest
 import ecommerce.exception.NotFoundException
 import ecommerce.model.CartItem
 import ecommerce.repository.CartRepository
-import ecommerce.repository.ProductRepositoryJDBC
 import ecommerce.repository.ProductRepositoryJPA
 import org.springframework.stereotype.Service
 

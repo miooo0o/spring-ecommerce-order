@@ -1,28 +1,30 @@
 package ecommerce.repository
 
 import ecommerce.model.Member
-import ecommerce.model.Product
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
-import org.springframework.stereotype.Repository
 
 interface MemberRepositoryJPA : JpaRepository<Member, Long> {
     fun existsByEmail(email: String): Boolean
+
     fun findByEmail(email: String): Member?
 }
 
 interface MemberRepository {
     fun save(member: Member): Member
+
     fun existsByEmail(email: String): Boolean
+
     fun findByEmail(email: String): Member?
+
     fun findById(id: Long): Member?
 }
 
-//@Repository
-class MemberRepositoryJDBC(private val jdbcTemplate: JdbcTemplate): MemberRepository {
+// @Repository
+class MemberRepositoryJDBC(private val jdbcTemplate: JdbcTemplate) : MemberRepository {
     private val memberRowMapper =
         RowMapper { rs, _ ->
             Member(

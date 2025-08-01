@@ -10,15 +10,20 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 
 interface ProductRepositoryJPA : JpaRepository<Product, Long> {
-     fun existsByName(name: String): Boolean
+    fun existsByName(name: String): Boolean
 }
 
 interface ProductRepository {
     fun findAll(): List<Product>
+
     fun save(entity: Product): Product
+
     fun deleteById(id: Long): Boolean
+
     fun existsByName(name: String): Boolean
+
     fun existsById(id: Long): Boolean
+
     fun findById(id: Long): Product?
 }
 
@@ -40,7 +45,7 @@ class ProductRepositoryJDBC(private val jdbcTemplate: JdbcTemplate) : ProductRep
         return products
     }
 
-    override fun  save(product: Product): Product {
+    override fun save(product: Product): Product {
         val productId = updateDataAndReturnId(product)
         return findById(productId)
             ?: throw RuntimeException("Product with id $productId not found")
