@@ -10,13 +10,14 @@ import ecommerce.exception.NotFoundException
 import ecommerce.exception.UnauthorizedException
 import ecommerce.infrastructure.JwtTokenProvider
 import ecommerce.model.Member
-import ecommerce.repository.MemberRepository
+import ecommerce.repository.MemberRepositoryJDBC
+import ecommerce.repository.MemberRepositoryJPA
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val memberRepository: MemberRepository,
+    private val memberRepository: MemberRepositoryJPA,
 ) {
     fun findMember(payload: String): RegisteredMember {
         val member = memberRepository.findByEmail(payload)
@@ -44,7 +45,7 @@ class AuthService(
         if (memberRepository.existsByEmail(request.email)) {
             throw ConflictException("Account with email already exists")
         }
-        memberRepository.registerMember(Member(email = request.email, password = request.password))
+        memberRepository.save(Member(email = request.email, password = request.password))
         return createToken(request)
     }
 
