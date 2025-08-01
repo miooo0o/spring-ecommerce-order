@@ -3,7 +3,7 @@ package ecommerce
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.Role
 import ecommerce.dto.TokenRequest
-import ecommerce.repository.ProductRepository
+import ecommerce.repository.ProductRepositoryJDBC
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.response.ExtractableResponse
@@ -23,7 +23,7 @@ import org.springframework.test.annotation.DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CartE2ETest {
     @Autowired
-    private lateinit var productRepository: ProductRepository
+    private lateinit var productRepository: ProductRepositoryJDBC
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
@@ -32,7 +32,7 @@ class CartE2ETest {
 
     @BeforeEach
     fun setUp() {
-        productRepository = ProductRepository(jdbcTemplate)
+        productRepository = ProductRepositoryJDBC(jdbcTemplate)
 
         jdbcTemplate.execute("DROP TABLE IF EXISTS cart_items")
         jdbcTemplate.execute("DROP TABLE IF EXISTS carts")
