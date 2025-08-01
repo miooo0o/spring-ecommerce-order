@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 
+// TODO to BigDecimal(10, 2)
+
 @Entity
 @Table(name = "products")
 class Product(
@@ -16,7 +18,7 @@ class Product(
     @Column(name = "name", nullable = false)
     var name: String,
     @Column(name = "price", nullable = false)
-    var price: Double, // to BigDecimal(10, 2)
+    var price: Double,
     @Column(name = "image_url", nullable = false)
     var imageUrl: String,
 ) {

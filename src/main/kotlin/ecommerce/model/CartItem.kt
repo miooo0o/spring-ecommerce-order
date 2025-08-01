@@ -1,7 +1,6 @@
 package ecommerce.model
 
 import ecommerce.dto.CartItemResponse
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -10,8 +9,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToOne
+import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
+import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 
 /**
@@ -28,16 +28,19 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "cart_items")
 class CartItem(
-    @JoinColumn(name = "cart_id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var cart: Cart,
-    @JoinColumn(name = "product_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     var product: Product,
+    @JoinColumn(name = "cart_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    var cart: Cart,
     @Column(nullable = false)
     var quantity: Int = 1,
-    @Column(name = "created_at", updatable = false, insertable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     val createdAt: LocalDateTime? = null,
+    @Column(name = "updated_at")
+    var updatedAt: LocalDateTime? = createdAt,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
@@ -50,5 +53,10 @@ class CartItem(
             productPrice = product.price,
             productImageUrl = product.imageUrl,
         )
+    }
+
+    @PreUpdate
+    fun preUpdate() {
+        updatedAt = LocalDateTime.now()
     }
 }

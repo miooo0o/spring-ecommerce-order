@@ -11,6 +11,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 // TODO: email: String to email: Email
+// TODO move ID to bottom
 
 @Entity
 @Table(name = "members")
@@ -21,9 +22,9 @@ class Member(
     @Column(name = "email", nullable = false)
     val email: String,
     @Column(name = "name", nullable = false)
-    val name: String = "",
+    var name: String = "",
     @Column(name = "password", nullable = false)
-    val password: String,
+    var password: String,
     @Column(name = "role", nullable = false)
     val role: String = Role.USER.name,
 ) {
