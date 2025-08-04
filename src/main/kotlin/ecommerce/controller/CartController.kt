@@ -1,14 +1,20 @@
 package ecommerce.controller
 
 import ecommerce.annotation.LoginMember
-import ecommerce.dto.AllCartItemsResponse
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
+import ecommerce.dto.CartResponse
 import ecommerce.dto.RegisteredMember
+import ecommerce.model.mapper.CartItemMapper
 import ecommerce.service.CartService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
@@ -17,9 +23,9 @@ class CartController(private val cartService: CartService) {
     @GetMapping
     fun getAllItems(
         @LoginMember member: RegisteredMember,
-    ): ResponseEntity<AllCartItemsResponse> {
+    ): ResponseEntity<CartResponse> {
         val cart = cartService.findCart(member.id)
-        val body = AllCartItemsResponse(cart.id, cart.items.map { it.toResponse() })
+        val body = CartResponse(cart.id, cart.items.map { CartItemMapper.toResponse(it) })
         return ResponseEntity.status(HttpStatus.OK).body(body)
     }
 
@@ -28,16 +34,17 @@ class CartController(private val cartService: CartService) {
         @LoginMember member: RegisteredMember,
         @RequestBody request: CartItemRequest,
     ): ResponseEntity<CartItemResponse> {
-        val response = cartService.addItem(member.id, request).toResponse()
-        return ResponseEntity.created(URI("/api/cart/items/${response.productId}")).body(response)
+        val cartItem = cartService.addItem(member.id, request)
+        val response = CartItemMapper.toResponse(cartItem)
+        return ResponseEntity.created(URI("/api/${cartItem.cart.id}/items/${response.productId}")).body(response)
     }
-//
-//    @DeleteMapping
-//    fun deleteItem(
-//        @LoginMember member: RegisteredMember,
-//        @RequestBody request: CartItemRequest,
-//    ): ResponseEntity<CartItemResponse?> {
-//
-//        return ResponseEntity.ok().body(response)
-//    }
+
+    @DeleteMapping
+    fun deleteItem(
+        @LoginMember member: RegisteredMember,
+        @RequestBody request: CartItemRequest,
+    ): ResponseEntity<CartItemResponse?> {
+        cartService.deleteItem(member.id, request)
+        return ResponseEntity.noContent().build()
+    }
 }

@@ -27,15 +27,31 @@ class CartService(
         request: CartItemRequest,
     ): CartItem {
         val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() } // TODO: change exception
-        val product = productRepository.findById(request.productId).orElseThrow { NotFoundException() } // TODO: change exception
+        val product =
+            productRepository.findById(request.productId).orElseThrow { NotFoundException() } // TODO: change exception
 
         val cart =
             cartRepository.findCartByMemberId(memberId)
                 ?: cartRepository.save(Cart(member))
 
-        val cartItem = CartItem(product, cart, request.quantity)
-        cart.addItem(cartItem)
-        cartItemRepository.save(cartItem) // TODO: chage if we need to save
-        return cartItem
+        val item = cart.addItem(product, request.quantity)
+        cartRepository.save(cart) // TODO: check if we need to save
+        return item
+    }
+
+    fun deleteItem(
+        memberId: Long,
+        request: CartItemRequest,
+    ) {
+        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() } // TODO: change exception
+        val product =
+            productRepository.findById(request.productId).orElseThrow { NotFoundException() } // TODO: change exception
+
+        val cart =
+            cartRepository.findCartByMemberId(memberId)
+                ?: cartRepository.save(Cart(member))
+
+        cart.removeItem(product, request.quantity)
+        cartRepository.save(cart)
     }
 }
