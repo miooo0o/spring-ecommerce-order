@@ -35,7 +35,9 @@ class Cart(
     val id: Long = 0L,
 ) {
     fun addItem(item: CartItem) {
-        if (item.cart == this) items.add(item)
+        if (item.cart == this) {
+            items.add(item)
+        }
     }
 
     fun removeItem(item: CartItem) {
