@@ -34,11 +34,24 @@ class Cart(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    fun addItem(item: CartItem) {
-        if (item.cart == this) items.add(item)
+    fun addItem(product: Product, quantity: Int) {
+        require (quantity > 0) { "Item quantity must be greater than zero." }
+        val existingItem = items.find { it.product == product }
+        if (existingItem != null) {
+            existingItem.quantity += quantity
+        } else {
+            val newItem = CartItem(product = product, cart = this, quantity = quantity)
+            items.add(newItem)
+        }
     }
 
-    fun removeItem(item: CartItem) {
-        if (item.cart == this) items.remove(item)
+    fun removeItem(product: Product, quantity: Int) {
+        require (quantity > 0) { "Item quantity must be greater than zero." }
+        val existingItem = items.find { it.product == product }
+        require (existingItem != null) { "Item not found." }
+
+        var quantityToRemove = quantity
+        if ((existingItem.quantity - quantity) < 0) quantityToRemove = existingItem.quantity
+        existingItem.quantity -= quantityToRemove
     }
 }
