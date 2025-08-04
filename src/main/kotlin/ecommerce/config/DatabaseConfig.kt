@@ -13,13 +13,15 @@ import ecommerce.repository.ProductRepositoryJPA
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 @Configuration
+@Profile("!test")
 class DatabaseConfig(
     private val memberRepository: MemberRepositoryJPA,
     private val productRepository: ProductRepositoryJPA,
     private val cartRepository: CartRepository,
-//    private val cartItemRepo: CartItemRepositoryJPA,
+    //    private val cartItemRepo: CartItemRepositoryJPA,
 ) {
     @Bean
     fun databaseInit(): CommandLineRunner =
