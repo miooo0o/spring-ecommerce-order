@@ -25,7 +25,7 @@ class Cart(
     val member: Member,
     @OneToMany(
         mappedBy = "cart",
-        cascade = [CascadeType.PERSIST, CascadeType.REMOVE],
+        cascade = [CascadeType.ALL],
         orphanRemoval = true,
         fetch = FetchType.LAZY,
     )
@@ -38,17 +38,22 @@ class Cart(
     fun addItem(
         product: Product,
         quantity: Int,
-    ) {
+    ): CartItem {
         require(quantity > 0) { "Item quantity must be greater than zero." }
-        val existingItem = items.find { it.product == product }
-        when (existingItem) {
+        val existingItem = items.find { it.product.id == product.id }
+        return when (existingItem) {
             null -> {
                 val newItem = CartItem(product = product, cart = this, quantity = quantity)
                 items.add(newItem)
+
+                newItem
             }
 
-            else ->
-                existingItem?.quantity += quantity
+            else -> {
+                existingItem.quantity += quantity
+
+                existingItem
+            }
         }
     }
 
@@ -58,7 +63,7 @@ class Cart(
         quantity: Int,
     ) {
         require(quantity > 0) { "Item quantity must be greater than zero." }
-        val existingItem = items.find { it.product == product } ?: throw IllegalArgumentException("Item not found.")
+        val existingItem = items.find { it.product.id == product.id } ?: throw IllegalArgumentException("Item not found.")
         var quantityToRemove = quantity
         if (existingItem.quantity < quantity) quantityToRemove = existingItem.quantity
 

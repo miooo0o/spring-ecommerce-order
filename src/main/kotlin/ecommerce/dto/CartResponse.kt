@@ -1,6 +1,6 @@
 package ecommerce.dto
 
-class AllCartItemsResponse(
+class CartResponse(
     val cartId: Long,
     val items: List<CartItemResponse> = emptyList(),
 )

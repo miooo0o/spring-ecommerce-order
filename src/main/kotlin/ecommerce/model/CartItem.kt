@@ -1,6 +1,5 @@
 package ecommerce.model
 
-import ecommerce.dto.CartItemResponse
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -45,16 +44,6 @@ class CartItem(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    fun toResponse(): CartItemResponse {
-        return CartItemResponse(
-            quantity = quantity,
-            productId = product.id ?: 0,
-            productName = product.name,
-            productPrice = product.price,
-            productImageUrl = product.imageUrl,
-        )
-    }
-
     @PreUpdate
     fun preUpdate() {
         updatedAt = LocalDateTime.now()
