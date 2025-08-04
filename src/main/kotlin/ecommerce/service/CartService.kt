@@ -6,16 +6,16 @@ import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
-import ecommerce.repository.MemberRepositoryJPA
-import ecommerce.repository.ProductRepositoryJPA
+import ecommerce.repository.MemberRepository
+import ecommerce.repository.ProductRepository
 import org.springframework.stereotype.Service
 
 @Service
 class CartService(
     private val cartRepository: CartRepository,
     private val cartItemRepository: CartItemRepository,
-    private val productRepository: ProductRepositoryJPA,
-    private val memberRepository: MemberRepositoryJPA,
+    private val productRepository: ProductRepository,
+    private val memberRepository: MemberRepository,
 ) {
     fun findCart(memberId: Long): Cart {
         return cartRepository.findCartByMemberId(memberId)

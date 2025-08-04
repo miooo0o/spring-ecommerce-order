@@ -1,7 +1,7 @@
 package ecommerce
 
 import ecommerce.dto.TokenRequest
-import ecommerce.repository.MemberRepositoryJPA
+import ecommerce.repository.MemberRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.response.ExtractableResponse
@@ -17,12 +17,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.annotation.DirtiesContext
 
-// @Disabled("Temporarily muted for debugging")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class TokenLoginControllerTest {
     @Autowired
-    private lateinit var productRepository: MemberRepositoryJPA
+    private lateinit var productRepository: MemberRepository
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate

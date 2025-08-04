@@ -10,13 +10,13 @@ import ecommerce.exception.NotFoundException
 import ecommerce.exception.UnauthorizedException
 import ecommerce.infrastructure.JwtTokenProvider
 import ecommerce.model.Member
-import ecommerce.repository.MemberRepositoryJPA
+import ecommerce.repository.MemberRepository
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val memberRepository: MemberRepositoryJPA,
+    private val memberRepository: MemberRepository,
 ) {
     fun findMember(payload: String): RegisteredMember {
         val member = memberRepository.findByEmail(payload)

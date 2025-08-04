@@ -8,8 +8,8 @@ import ecommerce.config.DatabaseFixture.createPaintingHappyHuman
 import ecommerce.config.DatabaseFixture.createPaintingSadHuman
 import ecommerce.config.DatabaseFixture.createPetra
 import ecommerce.dto.CartItemRequest
-import ecommerce.repository.MemberRepositoryJPA
-import ecommerce.repository.ProductRepositoryJPA
+import ecommerce.repository.MemberRepository
+import ecommerce.repository.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -24,10 +24,10 @@ class CartServiceTest {
     private lateinit var cartService: CartService
 
     @Autowired
-    private lateinit var productRepository: ProductRepositoryJPA
+    private lateinit var productRepository: ProductRepository
 
     @Autowired
-    private lateinit var memberRepository: MemberRepositoryJPA
+    private lateinit var memberRepository: MemberRepository
 
     @Test
     fun `x throw`() {

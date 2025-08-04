@@ -4,11 +4,11 @@ import ecommerce.dto.ProductRequest
 import ecommerce.exception.ConflictException
 import ecommerce.exception.NotFoundException
 import ecommerce.model.Product
-import ecommerce.repository.ProductRepositoryJPA
+import ecommerce.repository.ProductRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ProductService(private val productRepository: ProductRepositoryJPA) {
+class ProductService(private val productRepository: ProductRepository) {
     fun create(productRequest: ProductRequest): Long {
         if (productRepository.existsByName(productRequest.name)) {
             throw ConflictException("Product with name ${productRequest.name} already exists")

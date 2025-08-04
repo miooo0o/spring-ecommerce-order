@@ -9,8 +9,8 @@ import ecommerce.config.DatabaseFixture.createCanvas
 import ecommerce.config.DatabaseFixture.createPalette
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.TokenRequest
-import ecommerce.repository.MemberRepositoryJPA
-import ecommerce.repository.ProductRepositoryJPA
+import ecommerce.repository.MemberRepository
+import ecommerce.repository.ProductRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.response.ExtractableResponse
@@ -27,10 +27,10 @@ import org.springframework.http.HttpStatus
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductControllerTest {
     @Autowired
-    private lateinit var productRepository: ProductRepositoryJPA
+    private lateinit var productRepository: ProductRepository
 
     @Autowired
-    private lateinit var memberRepository: MemberRepositoryJPA
+    private lateinit var memberRepository: MemberRepository
 
     private lateinit var adminToken: String
 
@@ -153,7 +153,7 @@ class ProductControllerTest {
                     name = "colaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                     price = 0.0,
                     imageUrl = "abchttps://cola.jpg",
-                )
+                ),
             )
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value())
