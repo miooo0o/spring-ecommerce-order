@@ -2,7 +2,7 @@ package ecommerce
 
 import ecommerce.config.DatabaseFixture.PETRA
 import ecommerce.model.Cart
-import ecommerce.repository.CartRepositoryJPA
+import ecommerce.repository.CartRepository
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 @DataJpaTest
 class CartEntityTest {
     @Autowired
-    lateinit var repository: CartRepositoryJPA
+    lateinit var repository: CartRepository
 
     @Test
     fun initCart() {

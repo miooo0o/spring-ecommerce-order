@@ -7,7 +7,7 @@ import ecommerce.config.DatabaseFixture.CANVAS
 import ecommerce.config.DatabaseFixture.MINA
 import ecommerce.config.DatabaseFixture.PALETTE
 import ecommerce.config.DatabaseFixture.PETRA
-import ecommerce.repository.CartRepositoryJPA
+import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepositoryJPA
 import ecommerce.repository.ProductRepositoryJPA
 import org.springframework.boot.CommandLineRunner
@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration
 class DatabaseConfig(
     private val memberRepository: MemberRepositoryJPA,
     private val productRepository: ProductRepositoryJPA,
-    private val cartRepository: CartRepositoryJPA,
+    private val cartRepository: CartRepository,
 //    private val cartItemRepo: CartItemRepositoryJPA,
 ) {
     @Bean

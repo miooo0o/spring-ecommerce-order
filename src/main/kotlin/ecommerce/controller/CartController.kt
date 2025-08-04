@@ -5,7 +5,7 @@ import ecommerce.dto.AllCartItemsResponse
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.CartItemResponse
 import ecommerce.dto.RegisteredMember
-import ecommerce.service.CartServiceJPA
+import ecommerce.service.CartService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,7 +13,7 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/api/cart")
-class CartControllerJPA(private val cartService: CartServiceJPA) {
+class CartController(private val cartService: CartService) {
     @GetMapping
     fun getAllItems(
         @LoginMember member: RegisteredMember,
