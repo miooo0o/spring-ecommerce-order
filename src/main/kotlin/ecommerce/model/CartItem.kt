@@ -47,7 +47,7 @@ class CartItem(
 ) {
     fun toResponse(): CartItemResponse {
         return CartItemResponse(
-            quantity = quantity.toLong(),
+            quantity = quantity,
             productId = product.id ?: 0,
             productName = product.name,
             productPrice = product.price,

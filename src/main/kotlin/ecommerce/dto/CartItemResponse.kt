@@ -6,7 +6,7 @@ import ecommerce.model.Member
 import ecommerce.model.Product
 
 class CartItemResponse(
-    var quantity: Long,
+    var quantity: Int,
     val productId: Long,
     val productName: String,
     val productPrice: Double,

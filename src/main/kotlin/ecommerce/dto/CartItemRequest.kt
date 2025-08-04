@@ -6,5 +6,5 @@ class CartItemRequest(
     @field:Min(1)
     val productId: Long,
     @field:Min(1)
-    val quantity: Long,
+    val quantity: Int,
 )
