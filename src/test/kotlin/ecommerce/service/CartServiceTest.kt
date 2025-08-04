@@ -1,11 +1,12 @@
 package ecommerce.service
 
-import ecommerce.config.DatabaseFixture.ADMIN
 import ecommerce.config.DatabaseFixture.BRUSH
-import ecommerce.config.DatabaseFixture.MINA
-import ecommerce.config.DatabaseFixture.PAINTING_HAPPY_HUMAN
 import ecommerce.config.DatabaseFixture.PAINTING_SAD_HUMAN
-import ecommerce.config.DatabaseFixture.PETRA
+import ecommerce.config.DatabaseFixture.createAdmin
+import ecommerce.config.DatabaseFixture.createMina
+import ecommerce.config.DatabaseFixture.createPaintingHappyHuman
+import ecommerce.config.DatabaseFixture.createPaintingSadHuman
+import ecommerce.config.DatabaseFixture.createPetra
 import ecommerce.dto.CartItemRequest
 import ecommerce.repository.MemberRepositoryJPA
 import ecommerce.repository.ProductRepositoryJPA
@@ -31,7 +32,7 @@ class CartServiceTest {
     @Test
     fun `x throw`() {
         assertDoesNotThrow {
-            val member = memberRepository.save(PETRA)
+            val member = memberRepository.save(createPetra())
             val product = productRepository.save(BRUSH)
             val request = CartItemRequest(product.id!!, 1)
 
@@ -42,8 +43,8 @@ class CartServiceTest {
 
     @Test
     fun `return if`() {
-        val member = memberRepository.save(MINA)
-        val product = productRepository.save(PAINTING_SAD_HUMAN)
+        val member = memberRepository.save(createMina())
+        val product = productRepository.save(createPaintingSadHuman())
         val request = CartItemRequest(product.id!!, 1)
 
         val cartItem = cartService.addItem(member.id!!, request)
@@ -52,8 +53,8 @@ class CartServiceTest {
 
     @Test
     fun `delete item`() {
-        val member = memberRepository.save(ADMIN)
-        val product = productRepository.save(PAINTING_HAPPY_HUMAN)
+        val member = memberRepository.save(createAdmin())
+        val product = productRepository.save(createPaintingHappyHuman())
         val addRequest = CartItemRequest(product.id!!, 1)
         val cartItem = cartService.addItem(member.id!!, addRequest)
 

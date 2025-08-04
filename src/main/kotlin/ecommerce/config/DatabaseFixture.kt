@@ -12,6 +12,15 @@ object DatabaseFixture {
             password = "ILoveMyDog!",
             role = Role.USER.name,
         )
+
+    fun createMina(): Member =
+        Member(
+            email = "mina@mail.com",
+            name = "Mina Kim",
+            password = "ILoveMyDog!",
+            role = Role.USER.name,
+        )
+
     val PETRA =
         Member(
             email = "petra@mail.com",
@@ -20,7 +29,23 @@ object DatabaseFixture {
             role = Role.USER.name,
         )
 
-    val ADMIN =
+    fun createPetra(): Member =
+        Member(
+            email = "petra@mail.com",
+            name = "Petra Bencze",
+            password = "MyPasswordIsLong123",
+            role = Role.USER.name,
+        )
+
+    val ADMIN: Member =
+        Member(
+            email = "admin@mail.com",
+            name = "Boss",
+            password = "IAmAdmin!",
+            role = Role.ADMIN.name,
+        )
+
+    fun createAdmin(): Member =
         Member(
             email = "admin@mail.com",
             name = "Boss",
@@ -35,7 +60,21 @@ object DatabaseFixture {
             imageUrl = "https://example.com/images/brush.jpg",
         )
 
+    fun createBrush(): Product =
+        Product(
+            name = "Brush",
+            price = 5.99,
+            imageUrl = "https://example.com/images/brush.jpg",
+        )
+
     val CANVAS =
+        Product(
+            name = "Canvas",
+            price = 8.50,
+            imageUrl = "https://example.com/images/canvas.jpg",
+        )
+
+    fun createCanvas(): Product =
         Product(
             name = "Canvas",
             price = 8.50,
@@ -49,7 +88,21 @@ object DatabaseFixture {
             imageUrl = "https://example.com/images/palette.jpg",
         )
 
+    fun createPalette(): Product =
+        Product(
+            name = "Palette",
+            price = 6.25,
+            imageUrl = "https://example.com/images/palette.jpg",
+        )
+
     val ACRYLICS =
+        Product(
+            name = "Acrylics",
+            price = 15.00,
+            imageUrl = "https://example.com/images/acrylics.jpg",
+        )
+
+    fun createAcrylics(): Product =
         Product(
             name = "Acrylics",
             price = 15.00,
@@ -63,7 +116,14 @@ object DatabaseFixture {
             imageUrl = "https://picsum.d-o-go",
         )
 
-    val PAINTING_HAPPY_HUMAN =
+    fun createPaintingSadHuman(): Product =
+        Product(
+            name = "Sad human and Cute dog",
+            price = 3000.00,
+            imageUrl = "https://picsum.d-o-go",
+        )
+
+    fun createPaintingHappyHuman(): Product =
         Product(
             name = "Happy human and Cute dog",
             price = 19000.00,
