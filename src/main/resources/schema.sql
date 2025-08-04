@@ -9,7 +9,7 @@ create table PRODUCTS
 
 create table MEMBERS
 (
-    email     VARCHAR(20) UNIQUE,
+    email     VARCHAR(50) UNIQUE,
     name      VARCHAR(100) DEFAULT '',
     password  VARCHAR(50),
     role      VARCHAR(10),
@@ -29,6 +29,7 @@ create table CART_ITEMS (
     product_id  BIGINT,
     quantity    INT DEFAULT 1,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id          BIGINT AUTO_INCREMENT UNIQUE,
     PRIMARY KEY (id),
     FOREIGN KEY (product_id) REFERENCES PRODUCTS(id),
