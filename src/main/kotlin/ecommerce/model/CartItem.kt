@@ -60,7 +60,6 @@ class CartItem(
         updatedAt = LocalDateTime.now()
     }
 
-
     fun increaseQuantity() {
         // TODO: implement
     }

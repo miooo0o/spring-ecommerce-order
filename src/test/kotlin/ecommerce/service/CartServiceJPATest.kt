@@ -1,7 +1,7 @@
 package ecommerce.service
 
-import ecommerce.TestFixture.PAINTING_SAD_HUMAN
-import ecommerce.TestFixture.PETRA_USER
+import ecommerce.config.DatabaseFixture.PAINTING_SAD_HUMAN
+import ecommerce.config.DatabaseFixture.PETRA
 import ecommerce.dto.CartItemRequest
 import ecommerce.repository.MemberRepositoryJPA
 import ecommerce.repository.ProductRepositoryJPA
@@ -24,7 +24,7 @@ class CartServiceJPATest {
 
     @Test
     fun addItem() {
-        val member = memberRepository.save(PETRA_USER)
+        val member = memberRepository.save(PETRA)
         val product = productRepository.save(PAINTING_SAD_HUMAN)
         val request = CartItemRequest(product.id!!, 1)
 

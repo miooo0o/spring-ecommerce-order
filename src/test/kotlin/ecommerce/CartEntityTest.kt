@@ -1,6 +1,6 @@
 package ecommerce
 
-import ecommerce.TestFixture.PETRA_USER
+import ecommerce.config.DatabaseFixture.PETRA
 import ecommerce.model.Cart
 import ecommerce.repository.CartRepositoryJPA
 import org.junit.jupiter.api.Disabled
@@ -16,7 +16,7 @@ class CartEntityTest {
 
     @Test
     fun initCart() {
-        val user = PETRA_USER
+        val user = PETRA
         val cart = Cart(member = user)
         repository.save(cart)
     }
