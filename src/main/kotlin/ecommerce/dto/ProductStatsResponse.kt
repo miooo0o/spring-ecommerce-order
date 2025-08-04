@@ -4,6 +4,6 @@ import java.time.LocalDateTime
 
 class ProductStatsResponse(
     val productName: String,
-    val productQuantity: Long,
+    val productQuantity: Int,
     val mostRecent: LocalDateTime,
 )
