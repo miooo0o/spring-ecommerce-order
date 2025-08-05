@@ -30,7 +30,7 @@ class CartServiceTest {
     private lateinit var memberRepository: MemberRepository
 
     @Test
-    fun `x throw`() {
+    fun `adding item does not throw exception`() {
         assertDoesNotThrow {
             val member = memberRepository.save(createPetra())
             val product = productRepository.save(BRUSH)
@@ -42,7 +42,7 @@ class CartServiceTest {
     }
 
     @Test
-    fun `return if`() {
+    fun `adding item returns the correct cart item`() {
         val member = memberRepository.save(createMina())
         val product = productRepository.save(createPaintingSadHuman())
         val request = CartItemRequest(product.id!!, 1)
@@ -52,7 +52,7 @@ class CartServiceTest {
     }
 
     @Test
-    fun `delete item`() {
+    fun `delete item does not throw an exception`() {
         val member = memberRepository.save(createAdmin())
         val product = productRepository.save(createPaintingHappyHuman())
         val addRequest = CartItemRequest(product.id!!, 1)

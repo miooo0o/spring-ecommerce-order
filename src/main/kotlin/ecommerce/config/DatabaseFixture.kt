@@ -125,6 +125,20 @@ object DatabaseFixture {
             imageUrl = "https://example.com/images/acrylics.jpg",
         )
 
+    fun createPen(): Product =
+        Product(
+            name = "Pen",
+            price = 1.50,
+            imageUrl = "https://example.com/images/pen.jpg",
+        )
+
+    fun createPencil(): Product =
+        Product(
+            name = "Pencil",
+            price = 1.00,
+            imageUrl = "https://example.com/images/pencil.jpg",
+        )
+
     val PAINTING_SAD_HUMAN =
         Product(
             name = "Sad human and Cute dog",
