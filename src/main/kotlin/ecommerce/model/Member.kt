@@ -10,9 +10,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 
-// TODO: email: String to email: Email
-// TODO move ID to bottom
-
 @Entity
 @Table(name = "members")
 class Member(
@@ -34,7 +31,6 @@ class Member(
         }
     }
 
-    // TODO: toDto should be here? if we have time
     fun toRegisteredMember(): RegisteredMember {
         val role = Role.valueOf(this.role)
         return RegisteredMember(this.id!!, email, role)

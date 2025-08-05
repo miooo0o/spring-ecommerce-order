@@ -10,8 +10,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
-// TODO to BigDecimal(10, 2)
-
 @Entity
 @Table(name = "products")
 class Product(

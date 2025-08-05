@@ -26,23 +26,23 @@ class CartService(
 ) {
     fun findCart(memberId: Long): Cart {
         return cartRepository.findCartByMemberId(memberId)
-            ?: throw RuntimeException("not found something ... ") // TODO: change exception
+            ?: throw RuntimeException("not found something ... ")
     }
 
     fun addItem(
         memberId: Long,
         request: CartItemRequest,
     ): CartItem {
-        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() } // TODO: change exception
+        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() }
         val product =
-            productRepository.findById(request.productId).orElseThrow { NotFoundException() } // TODO: change exception
+            productRepository.findById(request.productId).orElseThrow { NotFoundException() }
 
         val cart =
             cartRepository.findCartByMemberId(memberId)
                 ?: cartRepository.save(Cart(member))
 
         val item = cart.addItem(product, request.quantity)
-        cartRepository.save(cart) // TODO: check if we need to save
+        cartRepository.save(cart)
         return item
     }
 
@@ -50,9 +50,9 @@ class CartService(
         memberId: Long,
         request: CartItemRequest,
     ) {
-        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() } // TODO: change exception
+        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() }
         val product =
-            productRepository.findById(request.productId).orElseThrow { NotFoundException() } // TODO: change exception
+            productRepository.findById(request.productId).orElseThrow { NotFoundException() }
 
         val cart =
             cartRepository.findCartByMemberId(memberId)
