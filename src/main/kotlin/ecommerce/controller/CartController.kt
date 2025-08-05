@@ -7,6 +7,8 @@ import ecommerce.dto.CartResponse
 import ecommerce.dto.RegisteredMember
 import ecommerce.model.mapper.CartItemMapper
 import ecommerce.service.CartService
+import org.springframework.data.domain.Page
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
@@ -27,6 +30,26 @@ class CartController(private val cartService: CartService) {
         val cart = cartService.findCart(member.id)
         val body = CartResponse(cart.id, cart.items.map { CartItemMapper.toResponse(it) })
         return ResponseEntity.status(HttpStatus.OK).body(body)
+    }
+
+
+    @GetMapping("/wishlist")
+    fun getAllItemsAsPages(
+        @LoginMember member: RegisteredMember,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+    ): ResponseEntity<Page<CartItemResponse>> {
+        val cart = cartService.findCart(member.id)
+        val itemPages = cartService.getPages(page, size, cart)
+        val headers =
+            HttpHeaders().apply {
+                add("X-Page-Number", itemPages.number.toString())
+                add("X-Page-Size", itemPages.size.toString())
+            }
+
+        return ResponseEntity.ok()
+            .headers(headers)
+            .body(itemPages)
     }
 
     @PostMapping
