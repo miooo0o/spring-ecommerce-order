@@ -21,6 +21,22 @@ object DatabaseFixture {
             role = Role.USER.name,
         )
 
+    val JIN =
+        Member(
+            email = "jin@mail.com",
+            name = "Jinnie",
+            password = "Hello1234!",
+            role = Role.USER.name,
+        )
+
+    fun createJin(): Member =
+        Member(
+            email = "jin@mail.com",
+            name = "Jinnie",
+            password = "Hello1234!",
+            role = Role.USER.name,
+        )
+
     val PETRA =
         Member(
             email = "petra@mail.com",

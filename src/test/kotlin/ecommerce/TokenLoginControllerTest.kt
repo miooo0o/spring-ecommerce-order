@@ -1,5 +1,11 @@
 package ecommerce
 
+import ecommerce.config.DatabaseFixture.JIN
+import ecommerce.config.DatabaseFixture.MINA
+import ecommerce.config.DatabaseFixture.PETRA
+import ecommerce.config.DatabaseFixture.createJin
+import ecommerce.config.DatabaseFixture.createMina
+import ecommerce.config.DatabaseFixture.createPetra
 import ecommerce.dto.TokenRequest
 import ecommerce.repository.MemberRepository
 import io.restassured.RestAssured
@@ -7,6 +13,7 @@ import io.restassured.http.ContentType
 import io.restassured.response.ExtractableResponse
 import io.restassured.response.Response
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -14,17 +21,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.annotation.DirtiesContext
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class TokenLoginControllerTest {
     @Autowired
-    private lateinit var productRepository: MemberRepository
-
-    @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var memberRepository: MemberRepository
 
     companion object {
         @JvmStatic
@@ -43,24 +44,14 @@ class TokenLoginControllerTest {
 
     @BeforeEach
     fun setUp() {
-//        productRepository = ProductRepositoryJDBC(jdbcTemplate)
+        val members =
+            listOf(createMina(), createPetra(), createJin())
+        memberRepository.saveAll(members)
+    }
 
-        jdbcTemplate.execute("DROP TABLE IF EXISTS cart_items")
-        jdbcTemplate.execute("DROP TABLE IF EXISTS carts")
-        jdbcTemplate.execute("DROP TABLE members IF EXISTS")
-        jdbcTemplate.execute(
-            "CREATE TABLE members(" + " id SERIAL, email VARCHAR(20) " +
-                "UNIQUE, name VARCHAR(100) DEFAULT '', password VARCHAR(50), role VARCHAR(10))",
-        )
-
-        val splitUpAttributes: List<Array<String>> =
-            listOf(
-                "sandra@email.com MyPassword USER",
-                "simon@email.com Hello1234 USER",
-                "sara@email.com 1234567! USER",
-                "sam@email.com abcdefghijkl USER",
-            ).map { name -> name.split(" ").toTypedArray() }.toList()
-        jdbcTemplate.batchUpdate("INSERT INTO members(email, password, role) VALUES (?,?,?)", splitUpAttributes)
+    @AfterEach
+    fun tearDown() {
+        memberRepository.deleteAll()
     }
 
     private fun loginRequest(body: TokenRequest): ExtractableResponse<Response> =
@@ -90,7 +81,7 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test registering already existent member`() {
-        val body = TokenRequest("sandra@email.com", "MyPassword")
+        val body = TokenRequest(JIN.email, JIN.password)
         val response = registerRequest(body)
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CONFLICT.value())
     }
@@ -104,7 +95,7 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test valid logins`() {
-        val body = TokenRequest(email = "simon@email.com", password = "Hello1234")
+        val body = TokenRequest(email = MINA.email, password = MINA.password)
         val response = loginRequest(body)
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
     }
@@ -119,14 +110,14 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test login with incorrect password`() {
-        val body = TokenRequest(email = "sam@email.com", password = "MyPassword#")
+        val body = TokenRequest(email = MINA.email, password = "hfkjhwldjw")
         val response = loginRequest(body)
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
     }
 
     @Test
-    fun `test request with valid token`() {
-        val body = TokenRequest(email = "sam@email.com", password = "abcdefghijkl")
+    fun `test request to findMyInfo() with valid token`() {
+        val body = TokenRequest(email = PETRA.email, password = PETRA.password)
         val loginResponse = loginRequest(body)
 
         assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
@@ -159,7 +150,7 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test request without 'Authorization' header`() {
-        val body = TokenRequest(email = "sam@email.com", password = "abcdefghijkl")
+        val body = TokenRequest(email = PETRA.email, password = PETRA.password)
         val loginResponse = loginRequest(body)
 
         assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())

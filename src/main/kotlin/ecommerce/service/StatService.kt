@@ -3,8 +3,6 @@ package ecommerce.service
 import ecommerce.dto.MemberStatsResponse
 import ecommerce.dto.ProductStatsResponse
 import ecommerce.repository.CartItemRepository
-import ecommerce.repository.CartRepository
-import ecommerce.repository.MemberRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
