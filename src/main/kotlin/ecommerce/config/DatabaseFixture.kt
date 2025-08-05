@@ -2,6 +2,7 @@ package ecommerce.config
 
 import ecommerce.dto.Role
 import ecommerce.model.Member
+import ecommerce.model.Option
 import ecommerce.model.Product
 
 object DatabaseFixture {
@@ -82,6 +83,21 @@ object DatabaseFixture {
             price = 5.99,
             imageUrl = "https://example.com/images/brush.jpg",
         )
+
+    fun createBrushWithOptions(): Product {
+        val product = Product(
+            name = "Brush",
+            price = 5.99,
+            imageUrl = "https://example.com/images/brush.jpg",
+
+            )
+        product.options = mutableListOf(
+            Option("small", 3, product),
+            Option("medium", 1, product),
+            Option("large", 2, product),
+        )
+        return product
+    }
 
     val CANVAS =
         Product(

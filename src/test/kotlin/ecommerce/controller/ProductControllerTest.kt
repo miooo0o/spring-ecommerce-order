@@ -5,8 +5,10 @@ import ecommerce.config.DatabaseFixture.BRUSH
 import ecommerce.config.DatabaseFixture.createAcrylics
 import ecommerce.config.DatabaseFixture.createAdmin
 import ecommerce.config.DatabaseFixture.createBrush
+import ecommerce.config.DatabaseFixture.createBrushWithOptions
 import ecommerce.config.DatabaseFixture.createCanvas
 import ecommerce.config.DatabaseFixture.createPalette
+import ecommerce.dto.OptionRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.TokenRequest
 import ecommerce.repository.MemberRepository
@@ -83,6 +85,7 @@ class ProductControllerTest {
                         name = "iced latte",
                         price = 4.5,
                         imageUrl = "https://cola.jpg",
+                        options = listOf(OptionRequest("option", 3)),
                     ),
                 )
                 .contentType(ContentType.JSON).`when`().post("/api/products").then().log().all().extract()
@@ -105,6 +108,24 @@ class ProductControllerTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val products: List<Any> = response.body().jsonPath().getList("")
         assertThat(products.size).isEqualTo(4)
+    }
+
+    @Test
+    fun getOptions() {
+        val product = createBrushWithOptions()
+        val productId = productRepository.save(product).id
+        val response =
+            RestAssured
+                .given().log().all()
+                .baseUri(baseUrl)
+                .header("Authorization", "Bearer $adminToken")
+                .contentType(ContentType.JSON).`when`().get("/api/products/${productId}/options")
+                .then().log().all()
+                .extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        val options: List<Any> = response.body().jsonPath().getList("")
+        assertThat(options.size).isEqualTo(product.options.size)
     }
 
     @Test
@@ -162,8 +183,14 @@ class ProductControllerTest {
 
     @Test
     fun sameNameException() {
-        val response = addProductRequest(ProductRequest(name = "cola", price = 4.5, imageUrl = "https://cola.jpg"))
-        val sameNameResponse = addProductRequest(ProductRequest(name = "cola", price = 4.5, imageUrl = "https://cola.jpg"))
+        val response =
+            addProductRequest(
+                ProductRequest(name = "cola", price = 4.5, imageUrl = "https://cola.jpg", options = listOf(OptionRequest("option", 3))),
+            )
+        val sameNameResponse =
+            addProductRequest(
+                ProductRequest(name = "cola", price = 4.5, imageUrl = "https://cola.jpg", options = listOf(OptionRequest("option", 3))),
+            )
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
         assertThat(sameNameResponse.statusCode()).isEqualTo(HttpStatus.CONFLICT.value())
