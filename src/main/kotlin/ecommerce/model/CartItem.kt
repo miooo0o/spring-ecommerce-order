@@ -48,12 +48,4 @@ class CartItem(
     fun preUpdate() {
         updatedAt = LocalDateTime.now()
     }
-
-    fun increaseQuantity() {
-        // TODO: implement
-    }
-
-    fun decreaseQuantity() {
-        // TODO: implement
-    }
 }

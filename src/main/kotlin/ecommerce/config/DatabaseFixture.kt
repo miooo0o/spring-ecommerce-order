@@ -99,25 +99,11 @@ object DatabaseFixture {
         return product
     }
 
-    val CANVAS =
-        Product(
-            name = "Canvas",
-            price = 8.50,
-            imageUrl = "https://example.com/images/canvas.jpg",
-        )
-
     fun createCanvas(): Product =
         Product(
             name = "Canvas",
             price = 8.50,
             imageUrl = "https://example.com/images/canvas.jpg",
-        )
-
-    val PALETTE =
-        Product(
-            name = "Palette",
-            price = 6.25,
-            imageUrl = "https://example.com/images/palette.jpg",
         )
 
     fun createPalette(): Product =
@@ -127,32 +113,11 @@ object DatabaseFixture {
             imageUrl = "https://example.com/images/palette.jpg",
         )
 
-    val ACRYLICS =
-        Product(
-            name = "Acrylics",
-            price = 15.00,
-            imageUrl = "https://example.com/images/acrylics.jpg",
-        )
-
     fun createAcrylics(): Product =
         Product(
             name = "Acrylics",
             price = 15.00,
             imageUrl = "https://example.com/images/acrylics.jpg",
-        )
-
-    fun createPen(): Product =
-        Product(
-            name = "Pen",
-            price = 1.50,
-            imageUrl = "https://example.com/images/pen.jpg",
-        )
-
-    fun createPencil(): Product =
-        Product(
-            name = "Pencil",
-            price = 1.00,
-            imageUrl = "https://example.com/images/pencil.jpg",
         )
 
     val PAINTING_SAD_HUMAN =

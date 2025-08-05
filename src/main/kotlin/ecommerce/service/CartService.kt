@@ -21,7 +21,6 @@ import kotlin.math.min
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val cartItemRepository: CartItemRepository,
     private val productRepository: ProductRepository,
     private val memberRepository: MemberRepository,
 ) {

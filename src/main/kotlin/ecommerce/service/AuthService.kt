@@ -34,14 +34,6 @@ class AuthService(
             ?: throw ForbiddenException()
     }
 
-    fun findMemberByToken(token: String): RegisteredMember {
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw UnauthorizedException("Invalid token")
-        }
-        val payload = jwtTokenProvider.getPayload(token)
-        return findMember(payload)
-    }
-
     fun register(request: TokenRequest): TokenResponse {
         if (memberRepository.existsByEmail(request.email)) {
             throw ConflictException("Account with email already exists")

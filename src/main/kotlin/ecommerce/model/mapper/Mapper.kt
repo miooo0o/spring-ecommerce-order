@@ -7,15 +7,6 @@ import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.Option
 
-object CartMapper {
-    fun toResponse(cart: Cart): CartResponse {
-        return CartResponse(
-            cartId = cart.id,
-            items = cart.items.map { CartItemMapper.toResponse(it) },
-        )
-    }
-}
-
 object CartItemMapper {
     fun toResponse(cartItem: CartItem): CartItemResponse {
         return CartItemResponse(
