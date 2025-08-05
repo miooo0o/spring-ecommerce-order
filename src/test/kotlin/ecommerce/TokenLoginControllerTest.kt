@@ -20,12 +20,18 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TokenLoginControllerTest {
     @Autowired
     private lateinit var memberRepository: MemberRepository
+
+    @LocalServerPort
+    private var port: Int = 0
+
+    val baseUrl get() = "http://localhost:$port"
 
     companion object {
         @JvmStatic
@@ -57,6 +63,7 @@ class TokenLoginControllerTest {
     private fun loginRequest(body: TokenRequest): ExtractableResponse<Response> =
         RestAssured
             .given().log().all()
+            .baseUri(baseUrl)
             .body(body).contentType(ContentType.JSON)
             .`when`()
             .post("/api/members/login")
@@ -66,6 +73,7 @@ class TokenLoginControllerTest {
     private fun registerRequest(body: TokenRequest): ExtractableResponse<Response> =
         RestAssured
             .given().log().all()
+            .baseUri(baseUrl)
             .body(body).contentType(ContentType.JSON)
             .`when`()
             .post("/api/members/register")
@@ -125,6 +133,7 @@ class TokenLoginControllerTest {
         val token = loginResponse.body().jsonPath().getString("token")
         val tokenResponse =
             RestAssured.given().log().all()
+                .baseUri(baseUrl)
                 .header("Authorization", "Bearer $token")
                 .`when`()
                 .get("/api/members/me/token")
@@ -139,6 +148,7 @@ class TokenLoginControllerTest {
         val token = "ndwndwoljdwpfkwkdsq.DNlwfk3wld'wamclwfjkepojfo3jf"
         val response =
             RestAssured.given().log().all()
+                .baseUri(baseUrl)
                 .header("Authorization", "Bearer $token")
                 .`when`()
                 .get("/api/members/me/token")
@@ -158,6 +168,7 @@ class TokenLoginControllerTest {
         val token = loginResponse.body().jsonPath().getString("token")
         val tokenResponse =
             RestAssured.given().log().all()
+                .baseUri(baseUrl)
                 .header("Location", "Bearer $token")
                 .`when`()
                 .get("/api/members/me/token")
