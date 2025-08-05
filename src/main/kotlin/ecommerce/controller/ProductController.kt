@@ -1,6 +1,7 @@
 package ecommerce.controller
 
 import ecommerce.annotation.Admin
+import ecommerce.dto.OptionResponse
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.RegisteredMember
 import ecommerce.model.Product
@@ -65,6 +66,14 @@ class ProductController(private val productService: ProductService) {
         } else {
             ResponseEntity.ok().build()
         }
+    }
+
+    @GetMapping("/api/products/{id}/options")
+    fun getOptions(
+        @PathVariable id: Long,
+    ): ResponseEntity<List<OptionResponse>> {
+        val response = productService.findOptions(id)
+        return ResponseEntity.ok().body(response)
     }
 
     @DeleteMapping("/api/products/{id}")

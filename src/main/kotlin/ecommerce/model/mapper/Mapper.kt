@@ -2,8 +2,10 @@ package ecommerce.model.mapper
 
 import ecommerce.dto.CartItemResponse
 import ecommerce.dto.CartResponse
+import ecommerce.dto.OptionResponse
 import ecommerce.model.Cart
 import ecommerce.model.CartItem
+import ecommerce.model.Option
 
 object CartMapper {
     fun toResponse(cart: Cart): CartResponse {
@@ -24,4 +26,13 @@ object CartItemMapper {
             productImageUrl = cartItem.product.imageUrl,
         )
     }
+}
+
+object OptionMapper {
+    fun toOptionResponse(option: Option) =
+        OptionResponse(
+            id = option.id,
+            name = option.name,
+            quantity = option.quantity,
+        )
 }

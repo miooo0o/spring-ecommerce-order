@@ -11,11 +11,13 @@ data class ProductRequest(
         message = "Only letters, digits and these special characters are allowed: () [] + - & / _",
     )
     @field:Size(max = 15, message = "Product name cannot exceed 15 characters")
-    var name: String = "",
+    val name: String = "",
     @field:Positive(message = "Price must be > 0")
-    var price: Double = 0.0,
+    val price: Double = 0.0,
     @field:Pattern(regexp = "^https?://.*", message = "URL must start with https:// or http://")
-    var imageUrl: String = "",
+    val imageUrl: String = "",
+    @field:Size(min = 1, message = "Product needs minimum one option")
+    val options: List<OptionRequest>? = null,
 ) {
     fun toProduct(id: Long? = null): Product {
         return Product(id, this.name, this.price, this.imageUrl)
