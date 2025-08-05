@@ -37,7 +37,7 @@ class ProductController(private val productService: ProductService) {
     }
 
     @GetMapping("/api/products-page")
-    fun getPages(
+    fun asPages(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
     ): ResponseEntity<Page<Product>> {
