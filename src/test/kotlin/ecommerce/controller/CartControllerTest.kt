@@ -7,6 +7,7 @@ import ecommerce.dto.CartItemRequest
 import ecommerce.dto.RegisteredMember
 import ecommerce.dto.Role
 import ecommerce.infrastructure.AuthorizationExtractor
+import ecommerce.infrastructure.JwtTokenProvider
 import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.Member
@@ -42,9 +43,13 @@ import java.time.LocalDateTime
 @TestConfiguration
 class TestWebConfig : WebMvcConfigurer {
     @Bean
-    fun loginMemberArgumentResolver(): LoginMemberArgumentResolver {
-        return mock(LoginMemberArgumentResolver::class.java)
-    }
+    fun loginMemberArgumentResolver(): LoginMemberArgumentResolver = mock(LoginMemberArgumentResolver::class.java)
+
+    @Bean
+    fun authorizationExtractor(): AuthorizationExtractor = mock(AuthorizationExtractor::class.java)
+
+    @Bean
+    fun jwtTokenProvider(): JwtTokenProvider = mock(JwtTokenProvider::class.java)
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(loginMemberArgumentResolver())
