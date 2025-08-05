@@ -12,6 +12,7 @@ import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.Member
 import ecommerce.model.Product
+import ecommerce.model.mapper.CartItemMapper
 import ecommerce.service.AuthService
 import ecommerce.service.CartService
 import org.junit.jupiter.api.BeforeEach
@@ -28,6 +29,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
@@ -194,4 +197,44 @@ class CartControllerTest
                     status { isNoContent() }
                 }
         }
+
+    @Test
+    fun `should return wishlist`() {
+        val memberGuri =
+            Member(
+                id = 1L,
+                name = "Guri",
+                email = "guri@email.com",
+                password = "very_cute_dog",
+                role = Role.USER.name,
+            )
+
+        val mockCartItem =
+            CartItem(
+                product = Product(101L, "Who Hate Test", 9999.99, "https://example.com/who_hate_test.jpg"),
+                cart = Cart(member = memberGuri),
+                quantity = 2,
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+                id = 1L,
+            )
+        val mockCart =
+            Cart(id = 1L, member = memberGuri).apply {
+                items.add(mockCartItem)
+            }
+        whenever(cartService.findCart(memberGuri.id!!)).thenReturn(mockCart)
+        whenever(cartService.getPages(any(), any(), any()))
+            .thenReturn(PageImpl(listOf(CartItemMapper.toResponse(mockCartItem)), PageRequest.of(3, 10), 20))
+
+
+        mockMvc.get("/api/cart/wishlist") {
+            requestAttr("email", "guri@email.com")
+        }
+            .andExpect { status { isOk() } }
+        jsonPath("$.productId").value(101)
+        jsonPath("$.quantity").value(2)
+        jsonPath("$.totalPages").value(2)
+        jsonPath("$.totalElements").value(20)
+        jsonPath("$.number").value(3)
     }
+}
