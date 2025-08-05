@@ -1,18 +1,13 @@
-package ecommerce
+package ecommerce.controller
 
-import ecommerce.config.DatabaseFixture.JIN
-import ecommerce.config.DatabaseFixture.MINA
-import ecommerce.config.DatabaseFixture.PETRA
-import ecommerce.config.DatabaseFixture.createJin
-import ecommerce.config.DatabaseFixture.createMina
-import ecommerce.config.DatabaseFixture.createPetra
+import ecommerce.config.DatabaseFixture
 import ecommerce.dto.TokenRequest
 import ecommerce.repository.MemberRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.response.ExtractableResponse
 import io.restassured.response.Response
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -51,7 +46,7 @@ class TokenLoginControllerTest {
     @BeforeEach
     fun setUp() {
         val members =
-            listOf(createMina(), createPetra(), createJin())
+            listOf(DatabaseFixture.createMina(), DatabaseFixture.createPetra(), DatabaseFixture.createJin())
         memberRepository.saveAll(members)
     }
 
@@ -84,51 +79,51 @@ class TokenLoginControllerTest {
     fun `test registering valid member`() {
         val body = TokenRequest(email = "newmember@gmail.com", password = "abcdef1234")
         val response = registerRequest(body)
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
     }
 
     @Test
     fun `test registering already existent member`() {
-        val body = TokenRequest(JIN.email, JIN.password)
+        val body = TokenRequest(DatabaseFixture.JIN.email, DatabaseFixture.JIN.password)
         val response = registerRequest(body)
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CONFLICT.value())
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CONFLICT.value())
     }
 
     @ParameterizedTest
     @MethodSource("invalidRegisterRequests")
     fun `test registering invalid members`(body: TokenRequest) {
         val response = registerRequest(body)
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value())
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value())
     }
 
     @Test
     fun `test valid logins`() {
-        val body = TokenRequest(email = MINA.email, password = MINA.password)
+        val body = TokenRequest(email = DatabaseFixture.MINA.email, password = DatabaseFixture.MINA.password)
         val response = loginRequest(body)
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
     }
 
     @Test
     fun `test login with non-registered member`() {
         val body = TokenRequest(email = "member@email.com", password = "MyPassword#")
         val response = loginRequest(body)
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
-        assertThat(response.body().asString()).contains("No account with email exists")
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
+        Assertions.assertThat(response.body().asString()).contains("No account with email exists")
     }
 
     @Test
     fun `test login with incorrect password`() {
-        val body = TokenRequest(email = MINA.email, password = "hfkjhwldjw")
+        val body = TokenRequest(email = DatabaseFixture.MINA.email, password = "hfkjhwldjw")
         val response = loginRequest(body)
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
     }
 
     @Test
     fun `test request to findMyInfo() with valid token`() {
-        val body = TokenRequest(email = PETRA.email, password = PETRA.password)
+        val body = TokenRequest(email = DatabaseFixture.PETRA.email, password = DatabaseFixture.PETRA.password)
         val loginResponse = loginRequest(body)
 
-        assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
+        Assertions.assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
 
         val token = loginResponse.body().jsonPath().getString("token")
         val tokenResponse =
@@ -140,7 +135,7 @@ class TokenLoginControllerTest {
                 .then().log().all()
                 .extract()
 
-        assertThat(tokenResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
+        Assertions.assertThat(tokenResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
     }
 
     @Test
@@ -155,15 +150,15 @@ class TokenLoginControllerTest {
                 .then().log().all()
                 .extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
     }
 
     @Test
     fun `test request without 'Authorization' header`() {
-        val body = TokenRequest(email = PETRA.email, password = PETRA.password)
+        val body = TokenRequest(email = DatabaseFixture.PETRA.email, password = DatabaseFixture.PETRA.password)
         val loginResponse = loginRequest(body)
 
-        assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
+        Assertions.assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
 
         val token = loginResponse.body().jsonPath().getString("token")
         val tokenResponse =
@@ -175,6 +170,6 @@ class TokenLoginControllerTest {
                 .then().log().all()
                 .extract()
 
-        assertThat(tokenResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
+        Assertions.assertThat(tokenResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
     }
 }
