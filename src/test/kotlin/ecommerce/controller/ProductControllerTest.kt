@@ -12,6 +12,7 @@ import ecommerce.dto.OptionRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.TokenRequest
 import ecommerce.repository.MemberRepository
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
@@ -33,6 +34,9 @@ class ProductControllerTest {
 
     @Autowired
     private lateinit var memberRepository: MemberRepository
+
+    @Autowired
+    private lateinit var optionRepository: OptionRepository
 
     private lateinit var adminToken: String
 
@@ -122,6 +126,9 @@ class ProductControllerTest {
                 .contentType(ContentType.JSON).`when`().get("/api/products/${productId}/options")
                 .then().log().all()
                 .extract()
+
+        val savedOptions = optionRepository.findAll()
+        assertThat(savedOptions.size).isEqualTo(product.options.size)
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         val options: List<Any> = response.body().jsonPath().getList("")
