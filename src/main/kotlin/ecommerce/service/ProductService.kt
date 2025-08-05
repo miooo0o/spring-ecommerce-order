@@ -8,11 +8,15 @@ import ecommerce.repository.ProductRepository
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import kotlin.math.min
 
+@Transactional
 @Service
 class ProductService(private val productRepository: ProductRepository) {
     fun create(productRequest: ProductRequest): Long {
+//        require(productRequest.options.isNotEmpty()) { "options must not be empty" }
+
         if (productRepository.existsByName(productRequest.name)) {
             throw ConflictException("Product with name ${productRequest.name} already exists")
         }
@@ -23,6 +27,7 @@ class ProductService(private val productRepository: ProductRepository) {
 
     fun read(): List<Product> {
         val products = productRepository.findAll()
+        products.forEach { println(it.options) }
         return products
     }
 

@@ -4,8 +4,10 @@ import ecommerce.dto.MemberStatsResponse
 import ecommerce.dto.ProductStatsResponse
 import ecommerce.repository.CartItemRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
+@Transactional
 @Service
 class StatService(
     private val cartItemRepository: CartItemRepository,

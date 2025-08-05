@@ -32,15 +32,13 @@ class CartController(private val cartService: CartService) {
         return ResponseEntity.status(HttpStatus.OK).body(body)
     }
 
-
     @GetMapping("/wishlist")
     fun getAllItemsAsPages(
         @LoginMember member: RegisteredMember,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
     ): ResponseEntity<Page<CartItemResponse>> {
-        val cart = cartService.findCart(member.id)
-        val itemPages = cartService.getPages(page, size, cart)
+        val itemPages = cartService.getPages(member.id, page, size)
         val headers =
             HttpHeaders().apply {
                 add("X-Page-Number", itemPages.number.toString())

@@ -70,9 +70,33 @@ It also supports several return types:
 Goal: Add options to product information.
 Design and implement the feature considering the relationship between the Product and Option models.
 
+### Feature List
+- [x] has:
+  - name 
+  - id
+  - quantity
+  - products
+- [x] Option names can include up to 50 characters, including spaces.
+- [x] Allowed special characters in option names:
+  - [x] (, ), [, ], +, -, &, /, _
+  - [x] All other special characters are not allowed.
+- [x] Option quantity must be at least 1 and less than 100,000,000.
+- [x] Implement a method to decrease the quantity of a product option by a specified amount:
+- [x] No need to create a separate HTTP API.
+- [x] This logic should be implemented in the Service class or Entity class for future reuse.
+- [ ] check inside DTO or addOption()
+  - [ ] A product must always have at least one option.
+  - [x] Duplicate option names are not allowed within the same product to prevent confusion during purchase.
+
+- [ ] test Option
+- [ ] Ensure that `Product` entity satisfies the following condition
+-   - a Product must always have at least one `Option`.
+
 ## Considerations
 
 - [ ] remove Boolean return type from all delete methods
 - [ ] change Double to BigDecimal inside the Entity (Product/price)
 - [x] decide on where and how to use Models
     - -> Entity == Model
+- [ ] dont use Cascade.All but Persist, Merge etc.
+- [ ] move product-option mapping to the constructor
