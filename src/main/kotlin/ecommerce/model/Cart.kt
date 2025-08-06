@@ -42,36 +42,37 @@ class Cart(
         require(quantity > 0) { "Item quantity must be greater than zero." }
         val existingItem = items.find { it.product.id == product.id }
         return when (existingItem) {
-            null -> {
-                val newItem =
-                    CartItem(
-                        product = product,
-                        cart = this,
-                        quantity = quantity,
-                        )
-                items.add(newItem)
-
-                newItem
-            }
-
-            else -> {
-                existingItem.quantity += quantity
-                existingItem.updatedAt = LocalDateTime.now()
-
-                existingItem
-            }
+            null -> addNewItem(product, quantity)
+            else -> updateExistingItem(existingItem, quantity)
         }
     }
 
-    fun removeItem(
+    private fun addNewItem(
         product: Product,
         quantity: Int,
-    ) {
-        require(quantity > 0) { "Item quantity must be greater than zero." }
-        val existingItem = items.find { it.product.id == product.id } ?: throw IllegalArgumentException("Item not found.")
-        var quantityToRemove = quantity
-        if (existingItem.quantity < quantity) quantityToRemove = existingItem.quantity
+    ): CartItem {
+        val newItem =
+            CartItem(
+                product = product,
+                cart = this,
+                quantity = quantity,
+            )
+        items.add(newItem)
+        return newItem
+    }
 
-        existingItem.quantity -= quantityToRemove
+    private fun updateExistingItem(
+        existingItem: CartItem,
+        quantity: Int,
+    ): CartItem {
+        existingItem.quantity += quantity
+        existingItem.updatedAt = LocalDateTime.now()
+        return existingItem
+    }
+
+    fun removeItem(product: Product) {
+        val existingItem =
+            items.find { it.product.id == product.id } ?: throw IllegalArgumentException("Item not found.")
+        items.remove(existingItem)
     }
 }
