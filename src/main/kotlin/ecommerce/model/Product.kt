@@ -15,20 +15,16 @@ import jakarta.persistence.Table
 class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long? = null,
     @Column(name = "name", nullable = false)
-    var name: String,
+    val name: String,
     @Column(name = "price", nullable = false)
-    var price: Double,
+    val price: Double,
     @Column(name = "image_url", nullable = false)
-    var imageUrl: String,
+    val imageUrl: String,
 ) {
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     var options: MutableList<Option> = mutableListOf()
-
-//    init {
-//        require(options.isNotEmpty()) { "Product name must not be blank" }
-//    }
 
     override fun equals(other: Any?): Boolean {
         if (this == other) return true

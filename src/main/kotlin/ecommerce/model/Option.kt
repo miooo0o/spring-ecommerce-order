@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne
 @Entity
 class Option(
     @Column(nullable = false)
-    var name: String = "",
+    val name: String = "",
     @Column(nullable = false)
     var quantity: Int = 1,
     @ManyToOne(fetch = FetchType.EAGER)
