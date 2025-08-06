@@ -6,7 +6,6 @@ import ecommerce.exception.NotFoundException
 import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.mapper.CartItemMapper
-import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepository
 import ecommerce.repository.ProductRepository

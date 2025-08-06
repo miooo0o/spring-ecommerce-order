@@ -1,9 +1,7 @@
 package ecommerce.model.mapper
 
 import ecommerce.dto.CartItemResponse
-import ecommerce.dto.CartResponse
 import ecommerce.dto.OptionResponse
-import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.Option
 
