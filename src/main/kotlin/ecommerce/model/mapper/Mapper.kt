@@ -20,7 +20,7 @@ object CartItemMapper {
 object OptionMapper {
     fun toOptionResponse(option: Option) =
         OptionResponse(
-            id = option.id,
+            optionId = option.id,
             name = option.name,
             quantity = option.quantity,
         )
