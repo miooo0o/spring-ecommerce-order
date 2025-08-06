@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 /**
  * Table carts {
@@ -34,7 +35,6 @@ class Cart(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    // TODO: check if @PreUpdate is really working here
     fun addItem(
         product: Product,
         quantity: Int,
@@ -43,7 +43,12 @@ class Cart(
         val existingItem = items.find { it.product.id == product.id }
         return when (existingItem) {
             null -> {
-                val newItem = CartItem(product = product, cart = this, quantity = quantity)
+                val newItem =
+                    CartItem(
+                        product = product,
+                        cart = this,
+                        quantity = quantity,
+                        )
                 items.add(newItem)
 
                 newItem
@@ -51,13 +56,13 @@ class Cart(
 
             else -> {
                 existingItem.quantity += quantity
+                existingItem.updatedAt = LocalDateTime.now()
 
                 existingItem
             }
         }
     }
 
-    // TODO: if quantity gets to 0, shall we remove the item entirely?
     fun removeItem(
         product: Product,
         quantity: Int,

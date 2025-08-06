@@ -8,9 +8,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
-import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 
 /**
@@ -35,17 +33,11 @@ class CartItem(
     var cart: Cart,
     @Column(nullable = false)
     var quantity: Int = 1,
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    val createdAt: LocalDateTime? = null,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime? = createdAt,
+    var updatedAt: LocalDateTime = createdAt,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-) {
-    @PreUpdate
-    fun preUpdate() {
-        updatedAt = LocalDateTime.now()
-    }
-}
+)
