@@ -22,25 +22,29 @@ class StatService(
                 .map { it.cart.member }
                 .distinctBy { it.id }
 
-        return members.map { MemberStatsResponse(it.id!!, it.email, it.name) }
+        return members.map { MemberStatsResponse(it.id!!, it.name, it.email) }
     }
 
     fun getTop5ProductsInThePast30Days(): List<ProductStatsResponse> {
         val threshold = LocalDateTime.now().minusDays(30)
         val items = cartItemRepository.findDistinctByUpdatedAtAfter(threshold)
-        return items
-            .groupBy { it.product }
-            .map { (product, list) ->
-                ProductStatsResponse(
-                    productName = product.name,
-                    productQuantity = list.sumOf { it.quantity },
-                    mostRecent = list.maxOf { it.createdAt ?: LocalDateTime.MIN },
-                )
-            }
-            .sortedWith(
+        val result =
+            items
+                .groupBy { it.product }
+                .map { (product, list) ->
+                    ProductStatsResponse(
+                        productName = product.name,
+                        productQuantity = list.sumOf { it.quantity },
+                        mostRecent = list.maxOf { it.updatedAt },
+                    )
+                }
+
+        val sorted =
+            result.sortedWith(
                 compareByDescending<ProductStatsResponse> { it.productQuantity }
                     .thenByDescending { it.mostRecent },
             )
-            .take(5)
+                .take(5)
+        return sorted
     }
 }
