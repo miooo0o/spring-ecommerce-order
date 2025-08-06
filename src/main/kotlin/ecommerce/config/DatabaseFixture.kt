@@ -85,17 +85,18 @@ object DatabaseFixture {
         )
 
     fun createBrushWithOptions(): Product {
-        val product = Product(
-            name = "Brush",
-            price = 5.99,
-            imageUrl = "https://example.com/images/brush.jpg",
-
+        val product =
+            Product(
+                name = "Brush",
+                price = 5.99,
+                imageUrl = "https://example.com/images/brush.jpg",
             )
-        product.options = mutableListOf(
-            Option("small", 3, product),
-            Option("medium", 1, product),
-            Option("large", 2, product),
-        )
+        product.options =
+            mutableListOf(
+                Option("small", 3, product),
+                Option("medium", 1, product),
+                Option("large", 2, product),
+            )
         return product
     }
 
@@ -139,5 +140,19 @@ object DatabaseFixture {
             name = "Happy human and Cute dog",
             price = 19000.00,
             imageUrl = "https://picsum.d-o-go",
+        )
+
+    fun createPen(): Product =
+        Product(
+            name = "Pen",
+            price = 1.50,
+            imageUrl = "https://example.com/images/pen.jpg",
+        )
+
+    fun createPencil(): Product =
+        Product(
+            name = "Pencil",
+            price = 1.00,
+            imageUrl = "https://example.com/images/pencil.jpg",
         )
 }

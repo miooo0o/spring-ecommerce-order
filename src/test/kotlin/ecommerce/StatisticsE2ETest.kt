@@ -3,12 +3,14 @@ package ecommerce
 import ecommerce.config.DatabaseFixture.ADMIN
 import ecommerce.config.DatabaseFixture.MINA
 import ecommerce.config.DatabaseFixture.createAcrylics
+import ecommerce.config.DatabaseFixture.createAdmin
 import ecommerce.config.DatabaseFixture.createBrush
 import ecommerce.config.DatabaseFixture.createCanvas
 import ecommerce.config.DatabaseFixture.createMina
 import ecommerce.config.DatabaseFixture.createPalette
 import ecommerce.config.DatabaseFixture.createPen
 import ecommerce.config.DatabaseFixture.createPencil
+import ecommerce.config.DatabaseFixture.createPetra
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.TokenRequest
 import ecommerce.model.Cart
@@ -22,8 +24,8 @@ import io.restassured.http.ContentType
 import io.restassured.response.ExtractableResponse
 import io.restassured.response.Response
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -31,8 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 
-@Disabled("Temporarily muted for debugging")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class StatisticsE2ETest {
     @Autowired
@@ -52,45 +54,64 @@ class StatisticsE2ETest {
 
     val baseUrl get() = "http://localhost:$port"
 
+    private lateinit var mostRecentCartItems: List<CartItem>
+
     @BeforeEach
     fun setUp() {
+        val fortyDaysAgo = LocalDateTime.now().minusDays(40)
+
         val mina = memberRepository.save(createMina())
-        productRepository.saveAll(listOf(createBrush(), createPalette(), createCanvas(), createAcrylics(), createPen(), createPencil()))
+        val petra = memberRepository.save(createPetra())
+        memberRepository.save(createAdmin())
+
         val minasCart = cartRepository.save(Cart(mina))
-        val cartItem1 = CartItem()
-        addItemsToCartWithDelayForUser(
-            loginAS(MINA.email, MINA.password),
+        val petrasCart = cartRepository.save(Cart(petra))
+        val brush = productRepository.save(createBrush())
+        val palette = productRepository.save(createPalette())
+        val canvas = productRepository.save(createCanvas())
+        val acrylics = productRepository.save(createAcrylics())
+        val pen = productRepository.save(createPen())
+        val pencil = productRepository.save(createPencil())
+
+        val cartItem1 = cartItemRepository.save(CartItem(product = brush, cart = minasCart, quantity = 7, createdAt = LocalDateTime.now()))
+        val cartItem2 =
+            cartItemRepository.save(
+                CartItem(product = palette, cart = minasCart, quantity = 6, createdAt = LocalDateTime.now()),
+            )
+        val cartItem3 = cartItemRepository.save(CartItem(product = canvas, cart = minasCart, quantity = 5, createdAt = LocalDateTime.now()))
+        val cartItem4 = cartItemRepository.save(CartItem(product = pen, cart = minasCart, quantity = 4, createdAt = fortyDaysAgo))
+        val cartItem5 = cartItemRepository.save(CartItem(product = acrylics, cart = minasCart, quantity = 3, createdAt = fortyDaysAgo))
+        val cartItem6 = cartItemRepository.save(CartItem(product = pencil, cart = minasCart, quantity = 2, createdAt = fortyDaysAgo))
+        val cartItem7 = cartItemRepository.save(CartItem(product = pencil, cart = petrasCart, quantity = 2, createdAt = fortyDaysAgo))
+
+        cartItem1.updatedAt = LocalDateTime.now()
+        cartItem2.updatedAt = LocalDateTime.now()
+        cartItem3.updatedAt = LocalDateTime.now()
+        cartItem4.updatedAt = fortyDaysAgo
+        cartItem5.updatedAt = fortyDaysAgo
+        cartItem6.updatedAt = fortyDaysAgo
+
+        cartItemRepository.saveAll(
+            listOf(
+                cartItem1,
+                cartItem2,
+                cartItem3,
+                cartItem4,
+                cartItem5,
+                cartItem6,
+            ),
         )
+
+        mostRecentCartItems = listOf(cartItem1, cartItem2, cartItem3)
     }
 
-    private fun addItemsToCartWithDelayForUser(userToken: String) {
-        val productIds = (1L..7L).toList()
-        productIds.take(2).forEach {
-            addProductToCart(CartItemRequest(it, 1), userToken)
-        }
-        Thread.sleep(2000)
-        productIds.drop(2).forEach {
-            addProductToCart(CartItemRequest(it, 1), userToken)
-        }
+    @AfterEach
+    fun tearDown() {
+        cartItemRepository.deleteAll()
+        cartRepository.deleteAll()
+        memberRepository.deleteAll()
+        productRepository.deleteAll()
     }
-
-//    private fun createProductsTable() {
-//        jdbcTemplate.execute(
-//            "CREATE TABLE products(" + "id SERIAL, name VARCHAR(100), price DECIMAL(10,2), image_url VARCHAR(500))",
-//        )
-//
-//        val splitUpAttributes: List<Array<String>> =
-//            listOf(
-//                "cola 2 http//cola",
-//                "fanta 3 http//fanta",
-//                "coffee 4 http//coffee",
-//                "tea 4 http//coffee",
-//                "milk 2.3 http//coffee",
-//                "water 1.5 http//coffee",
-//                "soda 2.0 http//coffee",
-//            ).map { name -> name.split(" ").toTypedArray() }.toList()
-//        jdbcTemplate.batchUpdate("INSERT INTO products(name, price, image_url) VALUES (?,?,?)", splitUpAttributes)
-//    }
 
     private fun loginAS(
         email: String,
@@ -146,7 +167,9 @@ class StatisticsE2ETest {
         assertThat(stats.statusCode()).isEqualTo(HttpStatus.OK.value())
         val json = stats.body().jsonPath()
         val productNames = json.getList<String>("productName")
-        assertThat(productNames).containsExactly("soda", "water", "milk", "tea", "coffee")
+        val topProducts =
+            listOf(mostRecentCartItems[0].product.name, mostRecentCartItems[1].product.name, mostRecentCartItems[2].product.name)
+        assertThat(productNames).containsExactlyInAnyOrderElementsOf(topProducts)
     }
 
     @Test
@@ -158,7 +181,7 @@ class StatisticsE2ETest {
         assertThat(stats.statusCode()).isEqualTo(HttpStatus.OK.value())
         val json = stats.body().jsonPath()
         val emails = json.getList<String>("email")
-        assertThat(emails).containsExactly(USER1_MAIL)
+        assertThat(emails).containsExactly(MINA.email)
     }
 
     @ParameterizedTest
