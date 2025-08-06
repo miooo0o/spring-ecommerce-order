@@ -21,9 +21,9 @@ class Option(
     val id: Long = 0L,
 ) {
     init {
-        require(quantity in 1 until 100_000_000) { "quantity must be in range 1..100_000_000" }
-        require(name.length <= 50) { "name length must be <= 50 characters" }
-        require(name.all { it.isLetterOrDigit() || it in allowedSpecialChars })
+        require(quantity in 1 until MAX_QUANTITY) { "quantity must be in range 1.. $MAX_QUANTITY" }
+        require(name.length <= MAX_NAME_LENGTH) { "name length must be <= 50 characters" }
+        require(name.all { it.isLetterOrDigit() || it in ALLOWED_SPECIAL_CHARS })
         if (product.options.isNotEmpty()) {
             require(product.options.all { it.name != this.name }) { "duplicate name ${product.name} found" }
         }
@@ -32,14 +32,19 @@ class Option(
 
     fun decreaseQuantity(quantity: Int) {
         require(quantity > 0) { "quantity must be positive" }
-        if (this.quantity - quantity <= 0) {
-            this.quantity = 1
-        } else {
-            this.quantity -= quantity
-        }
+        require(this.quantity > quantity) { "cannot decrease quantity of $quantity times" }
+
+        this.quantity -= quantity
+    }
+
+    fun increaseQuantity(quantity: Int) {
+        require(this.quantity + quantity < MAX_QUANTITY) { "quantity must be positive" }
+        this.quantity += quantity
     }
 
     companion object {
-        val allowedSpecialChars = setOf('(', ')', '[', ']', '+', '-', '&', '/', '_')
+        val ALLOWED_SPECIAL_CHARS = setOf('(', ')', '[', ']', '+', '-', '&', '/', '_')
+        const val MAX_QUANTITY = 100_000_000
+        const val MAX_NAME_LENGTH = 50
     }
 }

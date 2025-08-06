@@ -57,7 +57,7 @@ class CartService(
             cartRepository.findCartByMemberId(memberId)
                 ?: cartRepository.save(Cart(member))
 
-        cart.removeItem(product, request.quantity)
+        cart.removeItem(product)
         cartRepository.save(cart)
     }
 
