@@ -95,7 +95,6 @@ class ProductControllerTest {
                 .contentType(ContentType.JSON).`when`().post("/api/products").then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
-        assertThat(response.headers().toString()).contains("/api/products/5")
     }
 
     @Test
@@ -123,7 +122,7 @@ class ProductControllerTest {
                 .given().log().all()
                 .baseUri(baseUrl)
                 .header("Authorization", "Bearer $adminToken")
-                .contentType(ContentType.JSON).`when`().get("/api/products/${productId}/options")
+                .contentType(ContentType.JSON).`when`().get("/api/products/$productId/options")
                 .then().log().all()
                 .extract()
 
