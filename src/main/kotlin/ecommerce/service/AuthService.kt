@@ -21,10 +21,9 @@ class AuthService(
     private val memberRepository: MemberRepository,
 ) {
     fun findMember(payload: String): RegisteredMember {
-        val member = memberRepository.findByEmail(payload)
-        if (member == null) {
-            throw NotFoundException("Member not found")
-        }
+        val member =
+            memberRepository.findByEmail(payload)
+                ?: throw NotFoundException("Member not found")
         return member.toRegisteredMember()
     }
 

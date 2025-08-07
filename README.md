@@ -20,7 +20,7 @@
   - This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
 - [ ] Delegate quantity adjustment to `CartItem` instead of changing it externally
   - Consider moving this logic into the `CartItem` class to encapsulate behavior and reduce direct access.
-- [ ] Use the Elvis operator for null checks
+- [x] Use the Elvis operator for null checks
   - more idiomatic Kotlin by using the Elvis operator.
 - [ ] Annotate read-only transactional methods
   - Since this method is only reading data, consider marking it as `readOnly = true` for clarity and potential optimization.
