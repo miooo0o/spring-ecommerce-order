@@ -14,8 +14,8 @@ class Option(
     val name: String = "",
     @Column(nullable = false)
     var quantity: Int = 1,
-    @ManyToOne(fetch = FetchType.EAGER)
-    var product: Product,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val product: Product,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
