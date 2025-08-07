@@ -8,6 +8,9 @@
 - [x] DatabaseFixture
   - [x] move DatabaseFixture to test
   - [x] rename to TestFixture
+- [ ] Use fetch join to `Eager`ly load options and prevent N+1 query problem
+  - [x] `ProductService`, `ProductRepository`
+  - ... more
 
 #### Apply review
 - [ ] Remove unnecessary commented code
@@ -22,7 +25,7 @@
   - Consider moving this logic into the `CartItem` class to encapsulate behavior and reduce direct access.
 - [x] Use the Elvis operator for null checks
   - more idiomatic Kotlin by using the Elvis operator.
-- [ ] Annotate read-only transactional methods
+- [x] Annotate read-only transactional methods
   - Since this method is only reading data, consider marking it as `readOnly = true` for clarity and potential optimization.
 - [x] Delegate member access to the object
   - Instead of accessing nested properties directly

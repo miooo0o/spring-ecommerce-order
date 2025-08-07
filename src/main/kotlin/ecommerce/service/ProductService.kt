@@ -27,9 +27,9 @@ class ProductService(private val productRepository: ProductRepository) {
             ?: throw NotFoundException("Product with name ${productRequest.name} not found")
     }
 
+    @Transactional(readOnly = true)
     fun read(): List<Product> {
-        val products = productRepository.findAll()
-        products.forEach { it.options.size }
+        val products = productRepository.findAllWithOptions()
         return products
     }
 
