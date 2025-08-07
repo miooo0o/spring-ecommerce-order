@@ -3,13 +3,13 @@ package ecommerce.controller
 import ecommerce.annotation.Admin
 import ecommerce.dto.OptionResponse
 import ecommerce.dto.ProductRequest
+import ecommerce.dto.ProductResponse
 import ecommerce.dto.RegisteredMember
 import ecommerce.dto.UpsertStatus
 import ecommerce.model.Product
 import ecommerce.service.ProductService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
-import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -44,14 +44,7 @@ class ProductController(private val productService: ProductService) {
         @RequestParam(defaultValue = "10") size: Int,
     ): ResponseEntity<Page<Product>> {
         val productPage = productService.getPages(page, size)
-        val headers =
-            HttpHeaders().apply {
-                add("X-Page-Number", productPage.number.toString())
-                add("X-Page-Size", productPage.size.toString())
-            }
-
         return ResponseEntity.ok()
-            .headers(headers)
             .body(productPage)
     }
 
