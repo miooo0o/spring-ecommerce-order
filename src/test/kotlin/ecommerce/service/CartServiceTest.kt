@@ -1,12 +1,12 @@
 package ecommerce.service
 
-import ecommerce.config.DatabaseFixture.BRUSH
-import ecommerce.config.DatabaseFixture.PAINTING_SAD_HUMAN
-import ecommerce.config.DatabaseFixture.createAdmin
-import ecommerce.config.DatabaseFixture.createMina
-import ecommerce.config.DatabaseFixture.createPaintingHappyHuman
-import ecommerce.config.DatabaseFixture.createPaintingSadHuman
-import ecommerce.config.DatabaseFixture.createPetra
+import ecommerce.TestFixture.BRUSH
+import ecommerce.TestFixture.PAINTING_SAD_HUMAN
+import ecommerce.TestFixture.createAdmin
+import ecommerce.TestFixture.createMina
+import ecommerce.TestFixture.createPaintingHappyHuman
+import ecommerce.TestFixture.createPaintingSadHuman
+import ecommerce.TestFixture.createPetra
 import ecommerce.dto.CartItemRequest
 import ecommerce.repository.MemberRepository
 import ecommerce.repository.ProductRepository

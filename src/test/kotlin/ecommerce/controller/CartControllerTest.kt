@@ -117,9 +117,11 @@ class CartControllerTest
                     role = Role.USER.name,
                 )
 
+            val product = Product("Who Hate Test", 9999.99, "https://example.com/who_hate_test.jpg", 101L)
+
             val mockCartItem =
                 CartItem(
-                    product = Product(101L, "Who Hate Test", 9999.99, "https://example.com/who_hate_test.jpg"),
+                    product = product,
                     cart = Cart(member = memberGuri),
                     quantity = 2,
                     createdAt = LocalDateTime.now(),
@@ -159,7 +161,7 @@ class CartControllerTest
                     role = Role.USER,
                 )
 
-            val product = Product(102L, "Lonely Dog Walk", 1000.0, "https://dog-walking-alone-not-funny-sometime.com")
+            val product = Product("Lonely Dog Walk", 1000.0, "https://dog-walking-alone-not-funny-sometime.com", 102L)
             val request = CartItemRequest(productId = product.id!!, quantity = 2)
             val cart =
                 Cart(
@@ -209,9 +211,11 @@ class CartControllerTest
                     role = Role.USER.name,
                 )
 
+            val product = Product("Who Hate Test", 9999.99, "https://example.com/who_hate_test.jpg", 101L)
+
             val mockCartItem =
                 CartItem(
-                    product = Product(101L, "Who Hate Test", 9999.99, "https://example.com/who_hate_test.jpg"),
+                    product = product,
                     cart = Cart(member = memberGuri),
                     quantity = 2,
                     createdAt = LocalDateTime.now(),
@@ -222,6 +226,7 @@ class CartControllerTest
                 Cart(id = 1L, member = memberGuri).apply {
                     items.add(mockCartItem)
                 }
+
             whenever(cartService.findCart(memberGuri.id!!)).thenReturn(mockCart)
             whenever(cartService.getPages(any(), any(), any()))
                 .thenReturn(PageImpl(listOf(CartItemMapper.toResponse(mockCartItem)), PageRequest.of(3, 10), 20))

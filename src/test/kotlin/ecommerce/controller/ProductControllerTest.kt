@@ -1,13 +1,13 @@
 package ecommerce.controller
 
-import ecommerce.config.DatabaseFixture.ADMIN
-import ecommerce.config.DatabaseFixture.BRUSH
-import ecommerce.config.DatabaseFixture.createAcrylics
-import ecommerce.config.DatabaseFixture.createAdmin
-import ecommerce.config.DatabaseFixture.createBrush
-import ecommerce.config.DatabaseFixture.createBrushWithOptions
-import ecommerce.config.DatabaseFixture.createCanvas
-import ecommerce.config.DatabaseFixture.createPalette
+import ecommerce.TestFixture.ADMIN
+import ecommerce.TestFixture.BRUSH
+import ecommerce.TestFixture.createAcrylics
+import ecommerce.TestFixture.createAdmin
+import ecommerce.TestFixture.createBrush
+import ecommerce.TestFixture.createBrushWithOptions
+import ecommerce.TestFixture.createCanvas
+import ecommerce.TestFixture.createPalette
 import ecommerce.dto.OptionRequest
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.TokenRequest

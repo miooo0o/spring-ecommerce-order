@@ -1,16 +1,16 @@
 package ecommerce
 
-import ecommerce.config.DatabaseFixture.ADMIN
-import ecommerce.config.DatabaseFixture.MINA
-import ecommerce.config.DatabaseFixture.createAcrylics
-import ecommerce.config.DatabaseFixture.createAdmin
-import ecommerce.config.DatabaseFixture.createBrush
-import ecommerce.config.DatabaseFixture.createCanvas
-import ecommerce.config.DatabaseFixture.createMina
-import ecommerce.config.DatabaseFixture.createPalette
-import ecommerce.config.DatabaseFixture.createPen
-import ecommerce.config.DatabaseFixture.createPencil
-import ecommerce.config.DatabaseFixture.createPetra
+import ecommerce.TestFixture.ADMIN
+import ecommerce.TestFixture.MINA
+import ecommerce.TestFixture.createAcrylics
+import ecommerce.TestFixture.createAdmin
+import ecommerce.TestFixture.createBrush
+import ecommerce.TestFixture.createCanvas
+import ecommerce.TestFixture.createMina
+import ecommerce.TestFixture.createPalette
+import ecommerce.TestFixture.createPen
+import ecommerce.TestFixture.createPencil
+import ecommerce.TestFixture.createPetra
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.TokenRequest
 import ecommerce.model.Cart

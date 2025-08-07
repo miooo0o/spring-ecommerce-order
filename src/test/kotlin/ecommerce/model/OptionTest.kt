@@ -1,6 +1,6 @@
 package ecommerce.model
 
-import ecommerce.config.DatabaseFixture.createCanvas
+import ecommerce.TestFixture.createCanvas
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest

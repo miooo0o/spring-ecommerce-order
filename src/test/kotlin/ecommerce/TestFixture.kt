@@ -1,11 +1,11 @@
-package ecommerce.config
+package ecommerce
 
 import ecommerce.dto.Role
 import ecommerce.model.Member
 import ecommerce.model.Option
 import ecommerce.model.Product
 
-object DatabaseFixture {
+object TestFixture {
     val MINA =
         Member(
             email = "mina@mail.com",
