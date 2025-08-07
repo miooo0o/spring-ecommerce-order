@@ -14,17 +14,17 @@ class Option(
     val name: String = "",
     @Column(nullable = false)
     var quantity: Int = 1,
-    @ManyToOne(fetch = FetchType.LAZY)
-    val product: Product,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    lateinit var product: Product
+
     init {
         require(quantity in 1 until MAX_QUANTITY) { "quantity must be in range 1.. $MAX_QUANTITY" }
         require(name.length <= MAX_NAME_LENGTH) { "name length must be <= 50 characters" }
         require(name.all { it.isLetterOrDigit() || it in ALLOWED_SPECIAL_CHARS })
-        product.options.add(this) // TODO: separate relation
     }
 
     fun decreaseQuantity(quantity: Int) {
@@ -36,12 +36,13 @@ class Option(
 
     fun increaseQuantity(quantity: Int) {
         require(this.quantity + quantity < MAX_QUANTITY) { "quantity must be positive" }
+
         this.quantity += quantity
     }
 
     companion object {
-        val ALLOWED_SPECIAL_CHARS = setOf('(', ')', '[', ']', '+', '-', '&', '/', '_')
         const val MAX_QUANTITY = 100_000_000
         const val MAX_NAME_LENGTH = 50
+        val ALLOWED_SPECIAL_CHARS = setOf('(', ')', '[', ']', '+', '-', '&', '/', '_')
     }
 }

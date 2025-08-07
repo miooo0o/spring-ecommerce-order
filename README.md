@@ -14,13 +14,14 @@
 - [ ] cleanup codebase
   - [x] return UpsertStatus and ProductResponse in upsert API
   - [x] var -> val
+  - [x] removed bidirectional relation setup from Option constructor
 
 #### Apply review
-- [ ] Remove unnecessary commented code
+- [x] Remove unnecessary commented code
   - If these lines are not necessary, consider removing them to keep the code clean.
-- [ ] Avoid using `FetchType.EAGER` unless necessary
+- [x] Avoid using `FetchType.EAGER` unless necessary
   - Consider using `LAZY` unless eager fetching is required.
-- [ ] Avoid business logic inside the entity constructor
+- [x] Avoid business logic inside the entity constructor
   - Consider moving this validation to the service layer rather than placing it inside the entity.
 - [ ] Simplify manual pagination logic
   - This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.

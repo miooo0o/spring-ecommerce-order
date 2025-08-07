@@ -1,5 +1,6 @@
 package ecommerce.model
 
+import ecommerce.exception.DuplicateOptionNameException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -24,7 +25,26 @@ class Product(
     val id: Long = 0L,
 ) {
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var options: MutableList<Option> = mutableListOf()
+    val options: MutableList<Option> = mutableListOf()
+
+    fun addOptions(newOptions: List<Option>): Product {
+        require(newOptions.distinct().size == newOptions.size) {
+            throw DuplicateOptionNameException("Duplicate option found in new options")
+        }
+
+        newOptions.forEach { this.addOption(it) }
+        return this
+    }
+
+    fun addOption(newOption: Option): Product {
+        require(options.none { it.name == newOption.name }) {
+            throw DuplicateOptionNameException("Duplicate option name: ${newOption.name}")
+        }
+
+        newOption.product = this
+        options.add(newOption)
+        return this
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -17,15 +17,18 @@ import kotlin.math.min
 
 @Transactional
 @Service
-class ProductService(private val productRepository: ProductRepository) {
-    fun create(productRequest: ProductRequest): Long {
-        require(!productRequest.options.isNullOrEmpty()) { "options must not be empty" }
+class ProductService(
+    private val productRepository: ProductRepository,
+    private val productFactory: ProductFactory,
+) {
+    fun create(request: ProductRequest): Long {
+        require(!request.options.isNullOrEmpty()) { "options must not be empty" }
 
-        if (productRepository.existsByName(productRequest.name)) {
-            throw ConflictException("Product with name ${productRequest.name} already exists")
+        if (productRepository.existsByName(request.name)) {
+            throw ConflictException("Product with name ${request.name} already exists")
         }
-        val product = productRepository.save(productRequest.toProduct())
-        return product.id
+        val product = productFactory.from(request)
+        return productRepository.save(product).id
     }
 
     @Transactional(readOnly = true)
@@ -73,8 +76,3 @@ class ProductService(private val productRepository: ProductRepository) {
         return product.options.map { OptionMapper.toOptionResponse(it) }
     }
 }
-
-// TODO: add at service layer - Option.kt
-// if (product.options.isNotEmpty()) {
-//    require(product.options.all { it.name != this.name }) { "duplicate name ${product.name} found" }
-// }
