@@ -1,10 +1,40 @@
 # spring-ecommerce-order
 
-## Step 1-1 - Entity Mapping
+
+## Feature List
+### Step 1-2 - first Refactoring
+
+#### Todo
+- [x] DatabaseFixture
+  - [x] move DatabaseFixture to test
+  - [x] rename to TestFixture
+
+#### Apply review
+- [ ] Remove unnecessary commented code
+  - If these lines are not necessary, consider removing them to keep the code clean.
+- [ ] Avoid using `FetchType.EAGER` unless necessary
+  - Consider using `LAZY` unless eager fetching is required.
+- [ ] Avoid business logic inside the entity constructor
+  - Consider moving this validation to the service layer rather than placing it inside the entity.
+- [ ] Simplify manual pagination logic
+  - This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
+- [ ] Delegate quantity adjustment to `CartItem` instead of changing it externally
+  - Consider moving this logic into the `CartItem` class to encapsulate behavior and reduce direct access.
+- [ ] Use the Elvis operator for null checks
+  - more idiomatic Kotlin by using the Elvis operator.
+- [ ] Annotate read-only transactional methods
+  - Since this method is only reading data, consider marking it as `readOnly = true` for clarity and potential optimization.
+- [ ] Delegate member access to the object
+  - Instead of accessing nested properties directly
+  - consider letting the object expose what it needs through a method like `getMember()`.
+- [ ] Write unit tests for model-level methods
+  - This method looks like it can be unit tested. Consider writing unit tests for this logic.
+
+---
+
+###  Step 1-1 - Entity Mapping
 
 Goal: Transform Repository and entities using Spring Data JPA.
-
-### Feature List
 
 - [x] **Transform Models into Entities**
     - [x] Product -> `Product @Entity`
@@ -52,7 +82,7 @@ Goal: Transform Repository and entities using Spring Data JPA.
 Goal: Implement pagination for both the product list and the wishlist view.
 Most web applications do not display all data at once. Instead, content is split into multiple pages. 
 Pagination allows users to define how data should be sorted, how many items are shown per page, and which page number to retrieve.
-- 
+
 - [x] Sorting can also be used to prioritize which data appears first.
 - [x] Spring Data provides a convenient object called `Pageable`.
   - `Page<T>` – full pagination with total count, total pages, current page, etc.
@@ -82,13 +112,3 @@ Design and implement the feature considering the relationship between the Produc
 
 #### Test
 - [x] test Option
-
-## Considerations
-
-- [x] remove Boolean return type from all delete methods
-- [ ] change Double to BigDecimal inside the Entity (Product/price)
-- [x] decide on where and how to use Models
-    - Entity == Model
-- [ ] dont use Cascade.All but Persist, Merge etc.
-- [ ] move product-option mapping to the constructor
-- [ ] effective test: Create InMemory fake repos -> service uses the fake repos
