@@ -24,10 +24,7 @@ class Option(
         require(quantity in 1 until MAX_QUANTITY) { "quantity must be in range 1.. $MAX_QUANTITY" }
         require(name.length <= MAX_NAME_LENGTH) { "name length must be <= 50 characters" }
         require(name.all { it.isLetterOrDigit() || it in ALLOWED_SPECIAL_CHARS })
-        if (product.options.isNotEmpty()) {
-            require(product.options.all { it.name != this.name }) { "duplicate name ${product.name} found" }
-        }
-        product.options.add(this)
+        product.options.add(this) // TODO: separate relation
     }
 
     fun decreaseQuantity(quantity: Int) {
