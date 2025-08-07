@@ -19,10 +19,10 @@ class StatService(
 
         val members =
             cartItems
-                .map { it.cart.member }
+                .map { it.getMember() }
                 .distinctBy { it.id }
 
-        return members.map { MemberStatsResponse(it.id!!, it.name, it.email) }
+        return members.map { MemberStatsResponse(it.id, it.name, it.email) }
     }
 
     fun getTop5ProductsInThePast30Days(): List<ProductStatsResponse> {

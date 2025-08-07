@@ -10,14 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import java.time.LocalDateTime
 
-/**
- * Table carts {
- *   member_id bigint [ref: > members.id]
- *   id bigint [pk, increment]
- * }
- */
 @Entity
 @Table(name = "carts")
 class Cart(
@@ -65,14 +58,15 @@ class Cart(
         existingItem: CartItem,
         quantity: Int,
     ): CartItem {
-        existingItem.quantity += quantity
-        existingItem.updatedAt = LocalDateTime.now()
+        existingItem.changeQuantityTo(quantity)
+        existingItem.markAsUpdated()
         return existingItem
     }
 
     fun removeItem(product: Product) {
         val existingItem =
-            items.find { it.product.id == product.id } ?: throw IllegalArgumentException("Item not found.")
+            items.find { it.product.id == product.id }
+                ?: throw IllegalArgumentException("Item not found.")
         items.remove(existingItem)
     }
 }

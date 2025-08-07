@@ -41,15 +41,14 @@ class CartItem(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    fun decreaseQuantity(quantity: Int) {
-        require(quantity > 0) { "quantity must be positive" }
-        require(this.quantity > quantity) { "cannot decrease quantity of $quantity times" }
+    fun getMember(): Member = this.cart.member
 
-        this.quantity -= quantity
+    fun changeQuantityTo(quantity: Int) {
+        require(quantity > 0) { "quantity must be positive" }
+        this.quantity = quantity
     }
 
-    fun increaseQuantity(quantity: Int) {
-        require(quantity > 0) { "quantity must be positive" }
-        this.quantity += quantity
+    fun markAsUpdated() {
+        this.updatedAt = LocalDateTime.now()
     }
 }

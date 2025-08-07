@@ -18,13 +18,13 @@
   - Consider moving this validation to the service layer rather than placing it inside the entity.
 - [ ] Simplify manual pagination logic
   - This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
-- [ ] Delegate quantity adjustment to `CartItem` instead of changing it externally
+- [x] Delegate quantity adjustment to `CartItem` instead of changing it externally
   - Consider moving this logic into the `CartItem` class to encapsulate behavior and reduce direct access.
 - [x] Use the Elvis operator for null checks
   - more idiomatic Kotlin by using the Elvis operator.
 - [ ] Annotate read-only transactional methods
   - Since this method is only reading data, consider marking it as `readOnly = true` for clarity and potential optimization.
-- [ ] Delegate member access to the object
+- [x] Delegate member access to the object
   - Instead of accessing nested properties directly
   - consider letting the object expose what it needs through a method like `getMember()`.
 - [ ] Write unit tests for model-level methods
