@@ -13,9 +13,6 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "members")
 class Member(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
     @Column(name = "email", nullable = false)
     val email: String,
     @Column(name = "name", nullable = false)
@@ -24,6 +21,9 @@ class Member(
     var password: String,
     @Column(name = "role", nullable = false)
     val role: String = Role.USER.name,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 ) {
     fun validatePassword(password: String) {
         if (this.password != password) {
@@ -33,19 +33,19 @@ class Member(
 
     fun toRegisteredMember(): RegisteredMember {
         val role = Role.valueOf(this.role)
-        return RegisteredMember(this.id!!, email, role)
+        return RegisteredMember(this.id, email, role)
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this == other) return true
+        if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
 
         other as Member
 
-        return id != null && id == other.id
+        return id != 0L && id == other.id
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: System.identityHashCode(this)
+        return id.hashCode()
     }
 }

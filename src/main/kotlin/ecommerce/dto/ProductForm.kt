@@ -1,7 +1,7 @@
 package ecommerce.dto
 
-data class ProductForm(
-    val id: Long? = null,
+class ProductForm(
+    val id: Long = 0L,
     val name: String = "",
     val price: Double = 0.0,
     val imageUrl: String = "",

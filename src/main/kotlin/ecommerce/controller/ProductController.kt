@@ -4,6 +4,7 @@ import ecommerce.annotation.Admin
 import ecommerce.dto.OptionResponse
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.RegisteredMember
+import ecommerce.dto.UpsertStatus
 import ecommerce.model.Product
 import ecommerce.service.ProductService
 import jakarta.validation.Valid
@@ -56,15 +57,14 @@ class ProductController(private val productService: ProductService) {
 
     @PutMapping("/api/products/{id}")
     fun upsert(
+        @Admin admin: RegisteredMember,
         @RequestBody @Valid newProduct: ProductRequest,
         @PathVariable id: Long,
-        @Admin admin: RegisteredMember,
-    ): ResponseEntity<Unit> {
-        val created = productService.upsert(newProduct, id)
-        return if (created) {
-            return ResponseEntity.created(URI.create("/api/products/$id")).build()
-        } else {
-            ResponseEntity.ok().build()
+    ): ResponseEntity<ProductResponse> {
+        val response = productService.upsert(newProduct, id)
+        return when (response.upsertStatus) {
+            UpsertStatus.CREATED -> ResponseEntity.created(URI.create("/api/products/$id")).build()
+            UpsertStatus.UPDATED -> ResponseEntity.ok().build()
         }
     }
 

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 
-data class ProductRequest(
+class ProductRequest(
     @field:Pattern(
         regexp = "^[a-zA-Z0-9()\\[\\]+\\-&/_ ]+$",
         message = "Only letters, digits and these special characters are allowed: () [] + - & / _",
@@ -19,7 +19,7 @@ data class ProductRequest(
     @field:Size(min = 1, message = "Product needs minimum one option")
     val options: List<OptionRequest>? = null,
 ) {
-    fun toProduct(id: Long? = null): Product {
-        return Product(id, this.name, this.price, this.imageUrl)
+    fun toProduct(id: Long = 0L): Product {
+        return Product(this.name, this.price, this.imageUrl, id)
     }
 }

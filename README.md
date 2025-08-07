@@ -11,6 +11,9 @@
 - [ ] Use fetch join to `Eager`ly load options and prevent N+1 query problem
   - [x] `ProductService`, `ProductRepository`
   - ... more
+- [ ] cleanup codebase
+  - [x] return UpsertStatus and ProductResponse in upsert API
+  - [x] var -> val
 
 #### Apply review
 - [ ] Remove unnecessary commented code

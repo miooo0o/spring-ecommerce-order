@@ -64,7 +64,7 @@ class CartController(private val cartService: CartService) {
     fun deleteItem(
         @LoginMember member: RegisteredMember,
         @RequestBody request: CartItemRequest,
-    ): ResponseEntity<CartItemResponse?> {
+    ): ResponseEntity<Void> {
         cartService.deleteItem(member.id, request)
         return ResponseEntity.noContent().build()
     }

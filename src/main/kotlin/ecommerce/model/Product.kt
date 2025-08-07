@@ -13,29 +13,29 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "products")
 class Product(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
     @Column(name = "name", nullable = false)
     val name: String,
     @Column(name = "price", nullable = false)
     val price: Double,
     @Column(name = "image_url", nullable = false)
     val imageUrl: String,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 ) {
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     var options: MutableList<Option> = mutableListOf()
 
     override fun equals(other: Any?): Boolean {
-        if (this == other) return true
+        if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
 
         other as Product
 
-        return id != null && id == other.id
+        return id != 0L && id == other.id
     }
 
     override fun hashCode(): Int {
-        return id?.hashCode() ?: System.identityHashCode(this)
+        return id.hashCode()
     }
 }

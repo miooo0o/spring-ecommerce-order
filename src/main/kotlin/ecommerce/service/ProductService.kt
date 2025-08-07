@@ -2,8 +2,10 @@ package ecommerce.service
 
 import ecommerce.dto.OptionResponse
 import ecommerce.dto.ProductRequest
+import ecommerce.dto.ProductResponse
+import ecommerce.dto.UpsertStatus.CREATED
+import ecommerce.dto.UpsertStatus.UPDATED
 import ecommerce.exception.ConflictException
-import ecommerce.exception.NotFoundException
 import ecommerce.model.Product
 import ecommerce.model.mapper.OptionMapper
 import ecommerce.repository.ProductRepository
@@ -24,7 +26,6 @@ class ProductService(private val productRepository: ProductRepository) {
         }
         val product = productRepository.save(productRequest.toProduct())
         return product.id
-            ?: throw NotFoundException("Product with name ${productRequest.name} not found")
     }
 
     @Transactional(readOnly = true)
@@ -36,13 +37,17 @@ class ProductService(private val productRepository: ProductRepository) {
     fun upsert(
         updateRequest: ProductRequest,
         id: Long,
-    ): Boolean {
-        if (!productRepository.existsById(id)) {
-            create(updateRequest)
-            return true
-        }
-        productRepository.save(updateRequest.toProduct(id))
-        return false
+    ): ProductResponse {
+        val upsertStatus = if (!productRepository.existsById(id)) CREATED else UPDATED
+        val entity = productRepository.save(updateRequest.toProduct(id))
+
+        return ProductResponse(
+            productId = entity.id,
+            price = entity.price,
+            imageUrl = entity.imageUrl,
+            optionNames = entity.options.map { it.name },
+            upsertStatus = upsertStatus,
+        )
     }
 
     fun delete(id: Long) {
@@ -59,6 +64,7 @@ class ProductService(private val productRepository: ProductRepository) {
         val end = min(start + pageRequest.pageSize, products.size)
 
         val pageContent = products.subList(start, end)
+
         return PageImpl<Product>(pageContent, pageRequest, products.size.toLong())
     }
 
@@ -67,3 +73,8 @@ class ProductService(private val productRepository: ProductRepository) {
         return product.options.map { OptionMapper.toOptionResponse(it) }
     }
 }
+
+// TODO: add at service layer - Option.kt
+// if (product.options.isNotEmpty()) {
+//    require(product.options.all { it.name != this.name }) { "duplicate name ${product.name} found" }
+// }
