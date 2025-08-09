@@ -8,10 +8,9 @@
 - [x] DatabaseFixture
   - [x] move DatabaseFixture to test
   - [x] rename to TestFixture
-- [ ] Use fetch join to `Eager`ly load options and prevent N+1 query problem
+- [x] Use fetch join to `Eager`ly load options and prevent N+1 query problem
   - [x] `ProductService`, `ProductRepository`
-  - ... more
-- [ ] cleanup codebase
+- [x] cleanup codebase
   - [x] return UpsertStatus and ProductResponse in upsert API
   - [x] var -> val
   - [x] removed bidirectional relation setup from Option constructor
@@ -84,7 +83,7 @@ val pageContent = itemResponses.subList(start, end)
 return PageImpl<CartItemResponse>(pageContent, pageRequest, itemResponses.size.toLong())
 ```
 
-- [ ] This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
+- [x] This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
 
 ---
 
