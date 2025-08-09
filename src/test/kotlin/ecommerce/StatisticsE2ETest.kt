@@ -65,7 +65,6 @@ class StatisticsE2ETest {
         memberRepository.save(createAdmin())
 
         val minasCart = cartRepository.save(Cart(mina))
-        val petrasCart = cartRepository.save(Cart(petra))
         val brush = productRepository.save(createBrush())
         val palette = productRepository.save(createPalette())
         val canvas = productRepository.save(createCanvas())
@@ -82,7 +81,6 @@ class StatisticsE2ETest {
         val cartItem4 = cartItemRepository.save(CartItem(product = pen, cart = minasCart, quantity = 4, createdAt = fortyDaysAgo))
         val cartItem5 = cartItemRepository.save(CartItem(product = acrylics, cart = minasCart, quantity = 3, createdAt = fortyDaysAgo))
         val cartItem6 = cartItemRepository.save(CartItem(product = pencil, cart = minasCart, quantity = 2, createdAt = fortyDaysAgo))
-        val cartItem7 = cartItemRepository.save(CartItem(product = pencil, cart = petrasCart, quantity = 2, createdAt = fortyDaysAgo))
 
         cartItem1.updatedAt = LocalDateTime.now()
         cartItem2.updatedAt = LocalDateTime.now()
