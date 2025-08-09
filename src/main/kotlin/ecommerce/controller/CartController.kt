@@ -8,7 +8,6 @@ import ecommerce.dto.RegisteredMember
 import ecommerce.model.mapper.CartItemMapper
 import ecommerce.service.CartService
 import org.springframework.data.domain.Page
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -37,17 +36,8 @@ class CartController(private val cartService: CartService) {
         @LoginMember member: RegisteredMember,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
-    ): ResponseEntity<Page<CartItemResponse>> {
-        val itemPages = cartService.getPages(member.id, page, size)
-        val headers =
-            HttpHeaders().apply {
-                add("X-Page-Number", itemPages.number.toString())
-                add("X-Page-Size", itemPages.size.toString())
-            }
-
-        return ResponseEntity.ok()
-            .headers(headers)
-            .body(itemPages)
+    ): Page<CartItemResponse> {
+        return cartService.getPages(member.id, page, size)
     }
 
     @PostMapping

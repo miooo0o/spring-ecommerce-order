@@ -6,15 +6,15 @@ import ecommerce.exception.NotFoundException
 import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.mapper.CartItemMapper
+import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepository
 import ecommerce.repository.ProductRepository
-import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.math.min
 
 @Transactional
 @Service
@@ -22,6 +22,7 @@ class CartService(
     private val cartRepository: CartRepository,
     private val productRepository: ProductRepository,
     private val memberRepository: MemberRepository,
+    private val cartItemRepository: CartItemRepository,
 ) {
     fun findCart(memberId: Long): Cart {
         return cartRepository.findCartByMemberId(memberId)
@@ -65,14 +66,10 @@ class CartService(
         memberId: Long,
         page: Int,
         size: Int,
-    ): PageImpl<CartItemResponse> {
-        val cart = findCart(memberId)
-        val itemResponses = cart.items.map { CartItemMapper.toResponse(it) }
-        val pageRequest = PageRequest.of(page, size, Sort.by("productName"))
-        val start = pageRequest.offset.toInt()
-        val end = min(start + pageRequest.pageSize, itemResponses.size)
-
-        val pageContent = itemResponses.subList(start, end)
-        return PageImpl<CartItemResponse>(pageContent, pageRequest, itemResponses.size.toLong())
+    ): Page<CartItemResponse> {
+        val pageable = PageRequest.of(page, size, Sort.by("product.name"))
+        return cartItemRepository
+            .findByCartMemberId(memberId, pageable)
+            .map(CartItemMapper::toResponse)
     }
 }

@@ -94,7 +94,6 @@ class CartControllerTest
 
         @BeforeEach
         fun setup() {
-            val mockCart = mock(Cart::class.java)
             whenever(loginMemberArgumentResolver.supportsParameter(any())).thenReturn(true)
             whenever(loginMemberArgumentResolver.resolveArgument(any(), any(), any(), any()))
                 .thenReturn(
@@ -133,7 +132,7 @@ class CartControllerTest
                     items.add(mockCartItem)
                 }
 
-            whenever(cartService.findCart(memberGuri.id!!)).thenReturn(mockCart)
+            whenever(cartService.findCart(memberGuri.id)).thenReturn(mockCart)
 
             mockMvc.get("/api/cart") {
                 requestAttr("email", "guri@email.com")
@@ -162,7 +161,7 @@ class CartControllerTest
                 )
 
             val product = Product("Lonely Dog Walk", 1000.0, "https://dog-walking-alone-not-funny-sometime.com", 102L)
-            val request = CartItemRequest(productId = product.id!!, quantity = 2)
+            val request = CartItemRequest(productId = product.id, quantity = 2)
             val cart =
                 Cart(
                     id = 1L,
@@ -227,18 +226,28 @@ class CartControllerTest
                     items.add(mockCartItem)
                 }
 
-            whenever(cartService.findCart(memberGuri.id!!)).thenReturn(mockCart)
-            whenever(cartService.getPages(any(), any(), any()))
-                .thenReturn(PageImpl(listOf(CartItemMapper.toResponse(mockCartItem)), PageRequest.of(3, 10), 20))
+            val pageable = PageRequest.of(3, 10)
+            val page =
+                PageImpl(
+                    listOf(CartItemMapper.toResponse(mockCartItem)),
+                    pageable,
+                    20,
+                )
+
+            whenever(cartService.findCart(memberGuri.id)).thenReturn(mockCart)
+            whenever(cartService.getPages(eq(memberGuri.id), eq(3), eq(10)))
+                .thenReturn(page)
 
             mockMvc.get("/api/cart/wishlist") {
+                param("page", "3")
+                param("size", "10")
                 requestAttr("email", "guri@email.com")
             }
                 .andExpect { status { isOk() } }
-            jsonPath("$.productId").value(101)
-            jsonPath("$.quantity").value(2)
-            jsonPath("$.totalPages").value(2)
-            jsonPath("$.totalElements").value(20)
-            jsonPath("$.number").value(3)
+                .andExpect { jsonPath("$.content[0].productId").value(101) }
+                .andExpect { jsonPath("$.content[0].quantity").value(2) }
+                .andExpect { jsonPath("$.totalPages").value(2) }
+                .andExpect { jsonPath("$.totalElements").value(20) }
+                .andExpect { jsonPath("$.number").value(3) }
         }
     }
