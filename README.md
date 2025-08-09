@@ -83,7 +83,7 @@ val pageContent = itemResponses.subList(start, end)
 return PageImpl<CartItemResponse>(pageContent, pageRequest, itemResponses.size.toLong())
 ```
 
-- [ ] This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
+- [x] This pagination logic works, but it might be cleaner to let the repository handle pagination if possible.
 
 ---
 
