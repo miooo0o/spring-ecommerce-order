@@ -28,10 +28,6 @@ class Product(
     val options: MutableList<Option> = mutableListOf()
 
     fun addOptions(newOptions: List<Option>): Product {
-        require(newOptions.distinct().size == newOptions.size) {
-            throw DuplicateOptionNameException("Duplicate option found in new options")
-        }
-
         newOptions.forEach { this.addOption(it) }
         return this
     }
