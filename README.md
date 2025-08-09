@@ -8,10 +8,9 @@
 - [x] DatabaseFixture
   - [x] move DatabaseFixture to test
   - [x] rename to TestFixture
-- [ ] Use fetch join to `Eager`ly load options and prevent N+1 query problem
+- [x] Use fetch join to `Eager`ly load options and prevent N+1 query problem
   - [x] `ProductService`, `ProductRepository`
-  - ... more
-- [ ] cleanup codebase
+- [x] cleanup codebase
   - [x] return UpsertStatus and ProductResponse in upsert API
   - [x] var -> val
   - [x] removed bidirectional relation setup from Option constructor
