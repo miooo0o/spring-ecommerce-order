@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Manage Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        button {
+            background: #007BFF;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #productFormContainer {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            display: none; /* hidden initially */
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"], input[type="number"], input[type="url"], textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-buttons {
+            margin-top: 15px;
+        }
+
+        .form-buttons button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Product Management</h1>
+
+<button id="showAddFormBtn">Add Product</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Image</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}">1</td>
+        <td th:text="${product.name}">Sample Name</td>
+        <td th:text="${product.price}">$99.99</td>
+        <td><img th:src="${product.imageUrl}" alt="Product image" style="max-height:50px;"/></td>
+        <td>
+            <button class="editBtn"
+                    th:data-id="${product.id}"
+                    th:data-name="${product.name}"
+                    th:data-price="${product.price}"
+                    th:data-imageurl="${product.imageUrl}">
+                Edit
+            </button>
+            <button class="deleteBtn"
+                    th:data-id="${product.id}"
+                    style="background:#dc3545; margin-left: 8px;">
+                Delete
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div id="productFormContainer">
+    <h2 id="formTitle">Add New Product</h2>
+    <form id="productForm">
+        <input type="hidden" id="id" name="id"/>
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required/>
+
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" step="0.01" required/>
+
+        <label for="imageUrl">Image URL</label>
+        <input type="text" id="imageUrl" name="imageUrl" required/>
+
+        <div class="form-buttons">
+            <button type="submit">Save</button>
+            <button type="button" id="cancelBtn" style="background:#6c757d;">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const showAddFormBtn = document.getElementById('showAddFormBtn');
+    const productFormContainer = document.getElementById('productFormContainer');
+    const productForm = document.getElementById('productForm');
+    const formTitle = document.getElementById('formTitle');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    // Show empty form for adding product
+    showAddFormBtn.addEventListener('click', () => {
+        formTitle.textContent = 'Add New Product';
+        productForm.id.value = '';
+        productForm.name.value = '';
+        productForm.price.value = '';
+        productForm.imageUrl.value = '';
+        productFormContainer.style.display = 'block';
+    });
+
+    // Cancel button hides form
+    cancelBtn.addEventListener('click', () => {
+        productFormContainer.style.display = 'none';
+    });
+
+    // Edit button functionality
+    document.querySelectorAll('.editBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            formTitle.textContent = 'Edit Product';
+            productForm.id.value = btn.getAttribute('data-id');
+            productForm.name.value = btn.getAttribute('data-name');
+            productForm.price.value = btn.getAttribute('data-price');
+            productForm.imageUrl.value = btn.getAttribute('data-imageurl');
+            productFormContainer.style.display = 'block';
+        });
+    });
+
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const id = productForm.id.value;
+        const isEdit = id !== ""; // if id is set, it's an edit
+        const method = isEdit ? 'PUT' : 'POST';
+        const url = isEdit ? `/products/${id}` : '/products';
+
+        const product = {
+            name: productForm.name.value,
+            price: parseFloat(productForm.price.value),
+            imageUrl: productForm.imageUrl.value
+        };
+
+        fetch(url, {
+            method: method,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(product)
+        }).then(response => {
+            if (response.ok) {
+                alert(isEdit ? 'Product updated' : 'Product created');
+                window.location.reload();
+            } else {
+                alert('Failed to save product');
+            }
+        }).catch(() => {
+            alert('Error saving product');
+        });
+    });
+
+    document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const productId = btn.getAttribute('data-id');
+            if (!confirm('Delete product?')) return;
+
+            fetch(`/products/${productId}`, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    alert('Product deleted');
+                    window.location.reload(); // reload to reflect change
+                } else {
+                    alert('Failed to delete product');
+                }
+            }).catch(() => {
+                alert('Error deleting product');
+            });
+        });
+    });
+
+</script>
+
+
+</body>
+</html>
