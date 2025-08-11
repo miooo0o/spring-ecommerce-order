@@ -1,7 +1,7 @@
 package ecommerce.dto
 
 class OrderRequest(
-    val amount: Int,
+    val cartId: Long,
     val currency: String,
-    val paymentMethod: String,
+    val notes: String? = null,
 )
