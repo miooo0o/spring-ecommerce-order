@@ -11,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 class OrderItemTest {
-
     @Test
     fun `should create order item without throwing exception`() {
         assertDoesNotThrow {
@@ -28,18 +27,19 @@ class OrderItemTest {
         val product = createBrushWithOptions()
         val orderTestFixture = OrderTestFixture(member, listOf(product))
 
-        val exception = assertThrows<IllegalArgumentException> {
-            val optionIndex = orderTestFixture.optionIndex
-            orderTestFixture.products.map { product ->
-                OrderItem(
-                    orderTestFixture.order,
-                    product.options[orderTestFixture.optionIndex],
-                    product.name + product.options[optionIndex].name,
-                    (price * 100).toLong(),
-                    product.options[optionIndex].quantity + 1,
-                )
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                val optionIndex = orderTestFixture.optionIndex
+                orderTestFixture.products.map { product ->
+                    OrderItem(
+                        orderTestFixture.order,
+                        product.options[orderTestFixture.optionIndex],
+                        product.name + product.options[optionIndex].name,
+                        (price * 100).toLong(),
+                        product.options[optionIndex].quantity + 1,
+                    )
+                }
             }
-        }
         assertThat(exception.message).isEqualTo("Unit price must be positive")
     }
 
@@ -50,18 +50,19 @@ class OrderItemTest {
         val product = createBrushWithOptions()
         val orderTestFixture = OrderTestFixture(member, listOf(product))
 
-        val exception = assertThrows<IllegalArgumentException> {
-            val optionIndex = orderTestFixture.optionIndex
-            orderTestFixture.products.map { product ->
-                OrderItem(
-                    orderTestFixture.order,
-                    product.options[orderTestFixture.optionIndex],
-                    product.name + product.options[optionIndex].name,
-                    (product.price * 100).toLong(),
-                    quantity,
-                )
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                val optionIndex = orderTestFixture.optionIndex
+                orderTestFixture.products.map { product ->
+                    OrderItem(
+                        orderTestFixture.order,
+                        product.options[orderTestFixture.optionIndex],
+                        product.name + product.options[optionIndex].name,
+                        (product.price * 100).toLong(),
+                        quantity,
+                    )
+                }
             }
-        }
         assertThat(exception.message).isEqualTo("Quantity must be positive")
     }
 
@@ -71,19 +72,19 @@ class OrderItemTest {
         val product = createBrushWithOptions()
         val orderTestFixture = OrderTestFixture(member, listOf(product))
 
-        val exception = assertThrows<IllegalArgumentException> {
-            val optionIndex = orderTestFixture.optionIndex
-            orderTestFixture.products.map { product ->
-                OrderItem(
-                    orderTestFixture.order,
-                    product.options[orderTestFixture.optionIndex],
-                    product.name + product.options[optionIndex].name,
-                    (product.price * 100).toLong(),
-                    product.options[optionIndex].quantity + 1,
-                )
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                val optionIndex = orderTestFixture.optionIndex
+                orderTestFixture.products.map { product ->
+                    OrderItem(
+                        orderTestFixture.order,
+                        product.options[orderTestFixture.optionIndex],
+                        product.name + product.options[optionIndex].name,
+                        (product.price * 100).toLong(),
+                        product.options[optionIndex].quantity + 1,
+                    )
+                }
             }
-        }
         assertThat(exception.message).isEqualTo("Quantity must be small or equal with option.quantity")
     }
-
 }

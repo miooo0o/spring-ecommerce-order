@@ -80,6 +80,6 @@ class Order(
     companion object {
         private val ALLOWED_CURRENCY = listOf("EUR")
         private const val MINOR_SCALE = 2
-        private const val MIN_CALCULATED_AMOUNT = 0.50
+        const val MIN_CALCULATED_AMOUNT = 0.50
     }
 }
