@@ -32,7 +32,7 @@ class Product(
         return this
     }
 
-    fun addOption(newOption: Option): Product {
+    private fun addOption(newOption: Option): Product {
         require(options.none { it.name == newOption.name }) {
             throw DuplicateOptionNameException("Duplicate option name: ${newOption.name}")
         }
