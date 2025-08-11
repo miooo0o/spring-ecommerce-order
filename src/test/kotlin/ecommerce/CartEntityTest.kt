@@ -1,6 +1,6 @@
 package ecommerce
 
-import ecommerce.TestFixture.PETRA
+import ecommerce.BasicTestFixture.PETRA
 import ecommerce.model.Cart
 import ecommerce.repository.CartRepository
 import org.junit.jupiter.api.Test

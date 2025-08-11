@@ -1,6 +1,6 @@
 package ecommerce.controller
 
-import ecommerce.TestFixture
+import ecommerce.BasicTestFixture
 import ecommerce.dto.TokenRequest
 import ecommerce.repository.MemberRepository
 import io.restassured.RestAssured
@@ -46,7 +46,7 @@ class TokenLoginControllerTest {
     @BeforeEach
     fun setUp() {
         val members =
-            listOf(TestFixture.createMina(), TestFixture.createPetra(), TestFixture.createJin())
+            listOf(BasicTestFixture.createMina(), BasicTestFixture.createPetra(), BasicTestFixture.createJin())
         memberRepository.saveAll(members)
     }
 
@@ -84,7 +84,7 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test registering already existent member`() {
-        val body = TokenRequest(TestFixture.JIN.email, TestFixture.JIN.password)
+        val body = TokenRequest(BasicTestFixture.JIN.email, BasicTestFixture.JIN.password)
         val response = registerRequest(body)
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CONFLICT.value())
     }
@@ -98,7 +98,7 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test valid logins`() {
-        val body = TokenRequest(email = TestFixture.MINA.email, password = TestFixture.MINA.password)
+        val body = TokenRequest(email = BasicTestFixture.MINA.email, password = BasicTestFixture.MINA.password)
         val response = loginRequest(body)
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
     }
@@ -113,14 +113,14 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test login with incorrect password`() {
-        val body = TokenRequest(email = TestFixture.MINA.email, password = "hfkjhwldjw")
+        val body = TokenRequest(email = BasicTestFixture.MINA.email, password = "hfkjhwldjw")
         val response = loginRequest(body)
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value())
     }
 
     @Test
     fun `test request to findMyInfo() with valid token`() {
-        val body = TokenRequest(email = TestFixture.PETRA.email, password = TestFixture.PETRA.password)
+        val body = TokenRequest(email = BasicTestFixture.PETRA.email, password = BasicTestFixture.PETRA.password)
         val loginResponse = loginRequest(body)
 
         Assertions.assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())
@@ -155,7 +155,7 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test request without 'Authorization' header`() {
-        val body = TokenRequest(email = TestFixture.PETRA.email, password = TestFixture.PETRA.password)
+        val body = TokenRequest(email = BasicTestFixture.PETRA.email, password = BasicTestFixture.PETRA.password)
         val loginResponse = loginRequest(body)
 
         Assertions.assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value())

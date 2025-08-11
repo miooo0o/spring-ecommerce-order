@@ -1,16 +1,16 @@
 package ecommerce
 
-import ecommerce.TestFixture.ADMIN
-import ecommerce.TestFixture.MINA
-import ecommerce.TestFixture.createAcrylics
-import ecommerce.TestFixture.createAdmin
-import ecommerce.TestFixture.createBrush
-import ecommerce.TestFixture.createCanvas
-import ecommerce.TestFixture.createMina
-import ecommerce.TestFixture.createPalette
-import ecommerce.TestFixture.createPen
-import ecommerce.TestFixture.createPencil
-import ecommerce.TestFixture.createPetra
+import ecommerce.BasicTestFixture.ADMIN
+import ecommerce.BasicTestFixture.MINA
+import ecommerce.BasicTestFixture.createAcrylics
+import ecommerce.BasicTestFixture.createAdmin
+import ecommerce.BasicTestFixture.createBrush
+import ecommerce.BasicTestFixture.createCanvas
+import ecommerce.BasicTestFixture.createMina
+import ecommerce.BasicTestFixture.createPalette
+import ecommerce.BasicTestFixture.createPen
+import ecommerce.BasicTestFixture.createPencil
+import ecommerce.BasicTestFixture.createPetra
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.TokenRequest
 import ecommerce.model.Cart

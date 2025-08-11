@@ -5,7 +5,7 @@ import ecommerce.model.Member
 import ecommerce.model.Option
 import ecommerce.model.Product
 
-object TestFixture {
+object BasicTestFixture {
     val MINA =
         Member(
             email = "mina@mail.com",
@@ -156,4 +156,14 @@ object TestFixture {
             price = 1.00,
             imageUrl = "https://example.com/images/pencil.jpg",
         )
+
+    fun createProductWithOptions(product: Product): Product {
+        return product.addOptions(
+            listOf(
+                Option("small", 1),
+                Option("medium", 2),
+                Option("large", 3),
+            ),
+        )
+    }
 }
