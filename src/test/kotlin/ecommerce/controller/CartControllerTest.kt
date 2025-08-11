@@ -1,5 +1,6 @@
 package ecommerce.controller
 
+import ecommerce.OptionFixture
 import ecommerce.annotation.LoginMemberArgumentResolver
 import ecommerce.config.AuthInterceptor
 import ecommerce.config.WebMvcConfiguration
@@ -11,6 +12,7 @@ import ecommerce.infrastructure.JwtTokenProvider
 import ecommerce.model.Cart
 import ecommerce.model.CartItem
 import ecommerce.model.Member
+import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.model.mapper.CartItemMapper
 import ecommerce.service.AuthService
@@ -116,13 +118,21 @@ class CartControllerTest
                     role = Role.USER.name,
                 )
 
-            val product = Product("Who Hate Test", 9999.99, "https://example.com/who_hate_test.jpg", 101L)
+            val option = OptionFixture.PENDING_OPTION_HAPPY_DOG
+            val product = Product.toDummy(
+                "Who Hate Test",
+                9999,
+                "https://example.com/who_hate_test.jpg",
+                101L,
+                option,
+                )
 
             val mockCartItem =
                 CartItem(
                     product = product,
                     cart = Cart(member = memberGuri),
                     quantity = 2,
+                    option = ,
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     id = 1L,
@@ -159,15 +169,16 @@ class CartControllerTest
                     email = "guri@email.com",
                     role = Role.USER,
                 )
+            val option = Option("Super Cute Dog", 1, id = 1L)
 
             val product = Product("Lonely Dog Walk", 1000.0, "https://dog-walking-alone-not-funny-sometime.com", 102L)
-            val request = CartItemRequest(productId = product.id, quantity = 2)
+            val request = CartItemRequest(productId = product.id, optionId = 1L, quantity = 2)
             val cart =
                 Cart(
                     id = 1L,
                     member = memberGuri,
                 )
-            val mockCartItem = CartItem(product = product, cart = cart, quantity = 2, id = 1L)
+            val mockCartItem = CartItem(product = product, cart = cart, quantity = 2, option = option, id = 1L)
 
             whenever(cartService.addItem(registeredMember.id, request)).thenReturn(mockCartItem)
             whenever(cartService.addItem(eq(1L), any())).thenReturn(mockCartItem)
@@ -185,8 +196,9 @@ class CartControllerTest
 
         @Test
         fun `should delete item from cart`() {
+            val option = Option("Super Cute Dog", 1, id = 11L)
             val member = RegisteredMember(id = 1L, email = "guri@email.com", role = Role.USER)
-            val request = CartItemRequest(productId = 101L, quantity = 1)
+            val request = CartItemRequest(productId = 101L, optionId = 11, quantity = 1)
 
             doNothing().whenever(cartService).deleteItem(member.id, request)
 
@@ -217,6 +229,7 @@ class CartControllerTest
                     product = product,
                     cart = Cart(member = memberGuri),
                     quantity = 2,
+                    option = Option("Mock test Option"),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     id = 1L,

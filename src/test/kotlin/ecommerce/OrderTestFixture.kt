@@ -1,9 +1,11 @@
 package ecommerce
 
 import ecommerce.model.Member
+import ecommerce.model.Money
 import ecommerce.model.Order
 import ecommerce.model.OrderItem
 import ecommerce.model.Product
+import java.math.BigDecimal
 
 class OrderTestFixture(
     val member: Member,
@@ -16,10 +18,10 @@ class OrderTestFixture(
     private fun Product.toOrderItemWith(order: Order): OrderItem {
         return OrderItem(
             order,
-            this.options[optionIndex],
-            this.name + this.options[optionIndex].name,
-            (this.price * 100).toLong(),
-            1,
+            option = this.options[optionIndex],
+            itemName = this.name + this.options[optionIndex].name,
+            unitPrice =  Money(BigDecimal(this.price)),
+            quantity = 1,
         )
     }
 }

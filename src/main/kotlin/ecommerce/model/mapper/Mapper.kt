@@ -30,12 +30,12 @@ object OptionMapper {
 
 object OrderItemMapper {
     fun toOrderItemResponse(order: Order): List<OrderItemResponse> {
-        return order.orderItems.map { orderItem ->
+        return order.items.map { orderItem ->
             OrderItemResponse(
                 orderItemId = orderItem.id,
                 itemName = orderItem.itemName,
-                unitPrice = orderItem.unitPrice,
-                quantity = orderItem.quantity
+                unitPrice = orderItem.unitPrice.toMinorUnitLong(),
+                quantity = orderItem.quantity,
             )
         }
     }

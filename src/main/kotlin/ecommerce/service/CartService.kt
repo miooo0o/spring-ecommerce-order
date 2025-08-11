@@ -9,6 +9,7 @@ import ecommerce.model.mapper.CartItemMapper
 import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepository
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -23,6 +24,7 @@ class CartService(
     private val productRepository: ProductRepository,
     private val memberRepository: MemberRepository,
     private val cartItemRepository: CartItemRepository,
+    private val optionRepository: OptionRepository,
 ) {
     fun findCart(memberId: Long): Cart {
         return cartRepository.findCartByMemberId(memberId)
@@ -36,12 +38,13 @@ class CartService(
         val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() }
         val product =
             productRepository.findById(request.productId).orElseThrow { NotFoundException() }
+        val option = optionRepository.findById(request.optionId).orElseThrow { NotFoundException() }
 
         val cart =
             cartRepository.findCartByMemberId(memberId)
                 ?: cartRepository.save(Cart(member))
 
-        val item = cart.addItem(product, request.quantity)
+        val item = cart.addItem(product, option, request.quantity)
         cartRepository.save(cart)
         return item
     }

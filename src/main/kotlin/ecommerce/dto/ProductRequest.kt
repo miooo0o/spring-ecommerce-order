@@ -13,7 +13,7 @@ class ProductRequest(
     @field:Size(max = 15, message = "Product name cannot exceed 15 characters")
     val name: String = "",
     @field:Positive(message = "Price must be > 0")
-    val price: Double = 0.0,
+    val price: Long = 0L,
     @field:Pattern(regexp = "^https?://.*", message = "URL must start with https:// or http://")
     val imageUrl: String = "",
     @field:Size(min = 1, message = "Product needs minimum one option")

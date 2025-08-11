@@ -1,5 +1,7 @@
 package ecommerce.model
 
+import ecommerce.dto.PendingOption
+import ecommerce.dto.PendingProduct
 import ecommerce.exception.DuplicateOptionNameException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -8,6 +10,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
@@ -17,17 +20,23 @@ class Product(
     @Column(name = "name", nullable = false)
     val name: String,
     @Column(name = "price", nullable = false)
-    val price: Double,
+    val price: Long,
     @Column(name = "image_url", nullable = false)
     val imageUrl: String,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-) {
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
     val options: MutableList<Option> = mutableListOf()
+) {
+    init {
+        require(options.isNotEmpty()) { "Product must have at least one option." }
+    }
 
     fun addOptions(newOptions: List<Option>): Product {
+        require(options.isNotEmpty()) { "Product must have at least one option." }
+
         newOptions.forEach { this.addOption(it) }
         return this
     }
@@ -37,7 +46,6 @@ class Product(
             throw DuplicateOptionNameException("Duplicate option name: ${newOption.name}")
         }
 
-        newOption.product = this
         options.add(newOption)
         return this
     }
@@ -53,5 +61,30 @@ class Product(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    companion object {
+        fun withOption(pendingProduct: PendingProduct, pendingOptions: List<PendingOption>): Product {
+            val product = Product(
+                name = pendingProduct.name,
+                price = pendingProduct.price,
+                imageUrl = pendingProduct.imageUrl
+            )
+
+            val options = pendingOptions.map {
+                Option(
+                    name = it.name,
+                    quantity = it.quantity,
+                    optionalPrice = it.optionPrice,
+                )
+            }
+
+            product.options.addAll(options)
+            return product
+        }
+
+        internal fun toDummy(name: String, price: Long, imageUrl: String, pendingOptions: List<PendingOption>): Product {
+            return Product(name = name, price = price, imageUrl = imageUrl)
+        }
     }
 }

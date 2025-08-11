@@ -1,7 +1,7 @@
 package ecommerce.model
 
-import ecommerce.BasicTestFixture
-import ecommerce.BasicTestFixture.createBrushWithOptions
+import ecommerce.MemberTestFixture
+import ecommerce.MemberTestFixture.createBrushWithOptions
 import ecommerce.OrderTestFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -9,12 +9,13 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import java.math.BigDecimal
 
 class OrderItemTest {
     @Test
     fun `should create order item without throwing exception`() {
         assertDoesNotThrow {
-            val member = BasicTestFixture.MINA
+            val member = MemberTestFixture.MINA
             val product = createBrushWithOptions()
             val orderTestFixture = OrderTestFixture(member, listOf(product))
         }
@@ -23,7 +24,7 @@ class OrderItemTest {
     @ValueSource(doubles = [0.0, -1.0, 0.45])
     @ParameterizedTest
     fun `should throw when unit price is invalid`(price: Double) {
-        val member = BasicTestFixture.MINA
+        val member = MemberTestFixture.MINA
         val product = createBrushWithOptions()
         val orderTestFixture = OrderTestFixture(member, listOf(product))
 
@@ -32,11 +33,11 @@ class OrderItemTest {
                 val optionIndex = orderTestFixture.optionIndex
                 orderTestFixture.products.map { product ->
                     OrderItem(
-                        orderTestFixture.order,
-                        product.options[orderTestFixture.optionIndex],
-                        product.name + product.options[optionIndex].name,
-                        (price * 100).toLong(),
-                        product.options[optionIndex].quantity + 1,
+                        order = orderTestFixture.order,
+                        option = product.options[orderTestFixture.optionIndex],
+                        itemName = product.name + product.options[optionIndex].name,
+                        unitPrice = Money(BigDecimal(price)),
+                        quantity = product.options[optionIndex].quantity,
                     )
                 }
             }
@@ -46,7 +47,7 @@ class OrderItemTest {
     @ValueSource(ints = [0, -1, -9999999])
     @ParameterizedTest
     fun `should throw when quantity is invalid`(quantity: Int) {
-        val member = BasicTestFixture.MINA
+        val member = MemberTestFixture.MINA
         val product = createBrushWithOptions()
         val orderTestFixture = OrderTestFixture(member, listOf(product))
 
@@ -55,11 +56,11 @@ class OrderItemTest {
                 val optionIndex = orderTestFixture.optionIndex
                 orderTestFixture.products.map { product ->
                     OrderItem(
-                        orderTestFixture.order,
-                        product.options[orderTestFixture.optionIndex],
-                        product.name + product.options[optionIndex].name,
-                        (product.price * 100).toLong(),
-                        quantity,
+                        order = orderTestFixture.order,
+                        option = product.options[orderTestFixture.optionIndex],
+                        itemName = product.name + product.options[optionIndex].name,
+                        unitPrice = Money(BigDecimal(product.price)),
+                        quantity = quantity,
                     )
                 }
             }
@@ -68,7 +69,7 @@ class OrderItemTest {
 
     @Test
     fun `should throw when quantity exceeds available option quantity`() {
-        val member = BasicTestFixture.MINA
+        val member = MemberTestFixture.MINA
         val product = createBrushWithOptions()
         val orderTestFixture = OrderTestFixture(member, listOf(product))
 
@@ -77,11 +78,11 @@ class OrderItemTest {
                 val optionIndex = orderTestFixture.optionIndex
                 orderTestFixture.products.map { product ->
                     OrderItem(
-                        orderTestFixture.order,
-                        product.options[orderTestFixture.optionIndex],
-                        product.name + product.options[optionIndex].name,
-                        (product.price * 100).toLong(),
-                        product.options[optionIndex].quantity + 1,
+                        order = orderTestFixture.order,
+                        option = product.options[orderTestFixture.optionIndex],
+                        itemName = product.name + product.options[optionIndex].name,
+                        unitPrice = Money(BigDecimal(product.price)),
+                        quantity = product.options[optionIndex].quantity + 1,
                     )
                 }
             }

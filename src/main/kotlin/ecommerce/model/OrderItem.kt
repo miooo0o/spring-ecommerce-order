@@ -1,6 +1,7 @@
 package ecommerce.model
 
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
@@ -9,37 +10,25 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Positive
-import jakarta.validation.constraints.Size
 
 @Entity
 @Table(name = "order_items")
 class OrderItem(
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "order_id", nullable = false)
     val order: Order,
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "option_id")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "option_id", nullable = false)
     val option: Option,
-    @field:Size(max = 100)
-    @field:NotBlank
     @Column(nullable = false)
-    val itemName: String,
-    @Column(nullable = false)
-    @Positive
-    val unitPrice: Long,
-    @Column(nullable = false)
-    @Positive
     val quantity: Int,
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Embedded val unitPrice: Money,
+    @Column(nullable = false) val itemName: String,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
+    val lineTotal: Money = unitPrice.times(quantity)
+
     init {
         require(itemName.isNotEmpty()) { "Product name can not be empty" }
-        require(unitPrice > 0L) { "Unit price must be positive" }
-        require(unitPrice > Order.MIN_CALCULATED_AMOUNT * 100) { "Unit price must be positive" }
         require(quantity > 0) { "Quantity must be positive" }
         require(quantity <= option.quantity) { "Quantity must be small or equal with option.quantity" }
     }

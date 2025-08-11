@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
+import java.math.BigDecimal
 
 @Entity
 class Option(
@@ -14,12 +15,12 @@ class Option(
     val name: String = "",
     @Column(nullable = false)
     var quantity: Int = 1,
+    @Column(nullable = false)
+    var optionalPrice: Long = 0L,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    @ManyToOne(fetch = FetchType.LAZY)
-    lateinit var product: Product
 
     init {
         require(quantity in 1 until MAX_QUANTITY) { "quantity must be in range 1.. $MAX_QUANTITY" }
@@ -36,9 +37,10 @@ class Option(
 
     fun increaseQuantity(quantity: Int) {
         require(this.quantity + quantity < MAX_QUANTITY) { "quantity must be positive" }
-
         this.quantity += quantity
     }
+
+    fun effectivePrice(): Long = product.price + optionalPrice
 
     companion object {
         const val MAX_QUANTITY = 100_000_000

@@ -17,6 +17,7 @@ class Cart(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", unique = true)
     val member: Member,
+
     @OneToMany(
         mappedBy = "cart",
         cascade = [CascadeType.ALL],
@@ -28,53 +29,42 @@ class Cart(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    fun addItem(
-        product: Product,
-        option: Option,
-        quantity: Int,
-    ): CartItem {
-        require(quantity > 0) { "Item quantity must be greater than zero." }
-        val existingItem = items.find { it.product.id == product.id }
+
+    fun addItem(product: Product, option: Option, quantity: Int): CartItem {
+        require(quantity > 0) { "Quantity must be greater than zero." }
+        require(option.quantity >= quantity) { "Option stock is insufficient." }
+
+        val existingItem = findItemByProduct(product)
         return when (existingItem) {
-            null -> addNewItem(product, option, quantity)
-            else -> updateExistingItem(existingItem, option, quantity)
+            null -> createNewItem(product, option, quantity)
+            else -> updateItem(existingItem, option, quantity)
         }
     }
 
-    private fun addNewItem(
-        product: Product,
-        option: Option,
-        quantity: Int,
-    ): CartItem {
-        val newItem =
-            CartItem(
-                product = product,
-                cart = this,
-                option = option,
-                quantity = quantity,
-            )
+    fun removeItem(product: Product) {
+        val item = findItemByProduct(product)
+            ?: throw IllegalArgumentException("Item not found in cart.")
+        items.remove(item)
+    }
+
+    private fun findItemByProduct(product: Product): CartItem? =
+        items.find { it.product.name == product.name }
+
+    private fun createNewItem(product: Product, option: Option, quantity: Int): CartItem {
+        val newItem = CartItem(
+            cart = this,
+            product = product,
+            option = option,
+            quantity = quantity
+        )
         items.add(newItem)
         return newItem
     }
 
-    private fun updateExistingItem(
-        existingItem: CartItem,
-        option: Option,
-        quantity: Int,
-    ): CartItem {
-        when (existingItem.option) {
+    private fun updateItem(existingItem: CartItem, option: Option, quantity: Int): CartItem {
+        return when (existingItem.option) {
             option -> existingItem.changeQuantityTo(quantity)
             else -> existingItem.overrideOptionWith(option, quantity)
         }
-        if (existingItem.option === option)
-            existingItem.changeQuantityTo(quantity)
-        return existingItem
-    }
-
-    fun removeItem(product: Product) {
-        val existingItem =
-            items.find { it.product.id == product.id }
-                ?: throw IllegalArgumentException("Item not found.")
-        items.remove(existingItem)
     }
 }

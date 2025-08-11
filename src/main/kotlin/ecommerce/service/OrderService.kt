@@ -5,13 +5,12 @@ import ecommerce.dto.OrderRequest
 import ecommerce.dto.OrderResponse
 import ecommerce.exception.NotFoundException
 import ecommerce.model.Cart
+import ecommerce.model.Currency
 import ecommerce.model.Order
-import ecommerce.model.OrderItem
 import ecommerce.model.mapper.OrderItemMapper
 import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.OrderRepository
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -28,14 +27,18 @@ class OrderService(
         request: OrderRequest,
     ): OrderResponse {
         val cart = findCartWith(memberId)
-        val order = Order.from(cart, request)
-        val orderItems = snapshotOrderItems(order, cart)
+        val order = Order(
+            member = cart.member,
+            currency = Currency.fromCode(request.currency.uppercase()),
+        )
+        order.snapshotOrderItemFrom(cart)
+
         orderRepository.save(order)
 
         return OrderResponse(
             orderId = order.id,
             orderItems = OrderItemMapper.toOrderItemResponse(order),
-            currency = order.currency
+            currency = order.currency.name
         )
     }
 
@@ -43,21 +46,5 @@ class OrderService(
         cartRepository.findCartWithAllByMemberId(memberId)
             ?.also { require(it.items.isNotEmpty()) { "Cart is empty" } }
             ?: throw NotFoundException("Cart not found")
-
-    private fun snapshotOrderItems(order: Order, cart: Cart): List<OrderItem> {
-        require(order.orderItems.isNotEmpty()) { "Order items must have at least one item" }
-        return cart.items.map { item ->
-            require(item.product.name.isNotEmpty() && item.option.name.isNotEmpty()) { "names can not be empty" }
-
-            val snapshotName = "${item.product.name}: ${item.option.name}"
-
-            OrderItem(
-                order = order,
-                option = item.option,
-                quantity = item.quantity,
-                unitPrice = (item.product.price * 100).toLong(),
-                itemName = snapshotName,
-            )
-        }
-    }
 }
+

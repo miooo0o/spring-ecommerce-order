@@ -1,8 +1,10 @@
 package ecommerce.dto
 
+import ecommerce.model.Option
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 
 class OptionRequest(
@@ -15,6 +17,8 @@ class OptionRequest(
     @field:Min(value = MIN_QUANTITY, message = "At least 1 quantity required")
     @field:Max(value = MAX_QUANTITY, message = "quantity cannot be bigger then ")
     val quantity: Int,
+    @Positive
+    val optionPrice : Long = 0L,
 ) {
     companion object {
         const val MAX_QUANTITY = 99_999_999L

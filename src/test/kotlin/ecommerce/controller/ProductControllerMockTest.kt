@@ -1,6 +1,6 @@
 package ecommerce.controller
 
-import ecommerce.BasicTestFixture
+import ecommerce.MemberTestFixture
 import ecommerce.annotation.LoginMemberArgumentResolver
 import ecommerce.config.WebMvcConfiguration
 import ecommerce.dto.RegisteredMember
@@ -78,7 +78,7 @@ class ProductControllerMockTest
         fun `test getPages`() {
             setMockMemberTo(Role.USER)
 
-            val testProduct = BasicTestFixture.createPaintingSadHuman()
+            val testProduct = MemberTestFixture.createPaintingSadHuman()
             whenever(productService.getPages(any(), any()))
                 .thenReturn(PageImpl(listOf(testProduct), PageRequest.of(0, 10), 20))
 

@@ -4,6 +4,6 @@ class CartItemResponse(
     val productId: Long,
     val quantity: Int,
     val productName: String,
-    val productPrice: Double,
+    val productPrice: Long,
     val productImageUrl: String,
 )

@@ -1,20 +1,20 @@
 package ecommerce
 
-import ecommerce.BasicTestFixture.ADMIN
-import ecommerce.BasicTestFixture.MINA
-import ecommerce.BasicTestFixture.createAcrylics
-import ecommerce.BasicTestFixture.createAdmin
-import ecommerce.BasicTestFixture.createBrush
-import ecommerce.BasicTestFixture.createCanvas
-import ecommerce.BasicTestFixture.createMina
-import ecommerce.BasicTestFixture.createPalette
-import ecommerce.BasicTestFixture.createPen
-import ecommerce.BasicTestFixture.createPencil
-import ecommerce.BasicTestFixture.createPetra
+import ecommerce.MemberTestFixture.ADMIN
+import ecommerce.MemberTestFixture.MINA
+import ecommerce.MemberTestFixture.createAdmin
+import ecommerce.MemberTestFixture.createMina
+import ecommerce.MemberTestFixture.createPetra
+import ecommerce.OptionFixture.PENDING_COLOR_OPTIONS
+import ecommerce.OptionFixture.PENDING_OPTION_HAPPY_DOG
+import ecommerce.OptionFixture.PENDING_SIZE_OPTIONS
+import ecommerce.ProductFixture.PENDING_PRODUCT_BRUSH
+import ecommerce.ProductFixture.PENDING_PRODUCT_PAINT
 import ecommerce.dto.CartItemRequest
 import ecommerce.dto.TokenRequest
 import ecommerce.model.Cart
 import ecommerce.model.CartItem
+import ecommerce.model.Product
 import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepository
@@ -56,6 +56,7 @@ class StatisticsE2ETest {
 
     private lateinit var mostRecentCartItems: List<CartItem>
 
+
     @BeforeEach
     fun setUp() {
         val fortyDaysAgo = LocalDateTime.now().minusDays(40)
@@ -65,23 +66,70 @@ class StatisticsE2ETest {
         memberRepository.save(createAdmin())
 
         val minasCart = cartRepository.save(Cart(mina))
-        val brush = productRepository.save(createBrush())
-        val palette = productRepository.save(createPalette())
-        val canvas = productRepository.save(createCanvas())
-        val acrylics = productRepository.save(createAcrylics())
-        val pen = productRepository.save(createPen())
-        val pencil = productRepository.save(createPencil())
 
-        val cartItem1 = cartItemRepository.save(CartItem(product = brush, cart = minasCart, quantity = 7, createdAt = LocalDateTime.now()))
-        val cartItem2 =
-            cartItemRepository.save(
-                CartItem(product = palette, cart = minasCart, quantity = 6, createdAt = LocalDateTime.now()),
+        val brush = productRepository.save(Product.withOption(PENDING_PRODUCT_BRUSH, PENDING_SIZE_OPTIONS))
+        val paintingHappyDog = productRepository.save(Product.withOption(PENDING_PRODUCT_PAINT, PENDING_OPTION_HAPPY_DOG))
+        val canvas = productRepository.save(Product.withOption(PENDING_PRODUCT_PAINT, PENDING_COLOR_OPTIONS))
+        val acrylics = productRepository.save(Product.withOption(PENDING_PRODUCT_PAINT, PENDING_COLOR_OPTIONS))
+        val pen = productRepository.save(Product.withOption(PENDING_PRODUCT_PAINT, PENDING_SIZE_OPTIONS))
+
+        val cartItem1 = cartItemRepository.save(
+            CartItem(
+                option = brush.options[0],
+                cart = minasCart,
+                quantity = 7,
+                product = brush,
+                createdAt = LocalDateTime.now()
             )
-        val cartItem3 = cartItemRepository.save(CartItem(product = canvas, cart = minasCart, quantity = 5, createdAt = LocalDateTime.now()))
-        val cartItem4 = cartItemRepository.save(CartItem(product = pen, cart = minasCart, quantity = 4, createdAt = fortyDaysAgo))
-        val cartItem5 = cartItemRepository.save(CartItem(product = acrylics, cart = minasCart, quantity = 3, createdAt = fortyDaysAgo))
-        val cartItem6 = cartItemRepository.save(CartItem(product = pencil, cart = minasCart, quantity = 2, createdAt = fortyDaysAgo))
+        )
+        val cartItem2 = cartItemRepository.save(
+            CartItem(
+                option = paintingHappyDog.options[0],
+                cart = minasCart,
+                quantity = 6,
+                product = paintingHappyDog,
+                createdAt = LocalDateTime.now()
+            )
+        )
+        val cartItem3 = cartItemRepository.save(
+            CartItem(
+                option = brush.options[1],
+                cart = minasCart,
+                quantity = 5,
+                product = brush,
+                createdAt = LocalDateTime.now()
+            )
+        )
+        val cartItem4 = cartItemRepository.save(
+            CartItem(
+                option = canvas.options[0],
+                cart = minasCart,
+                quantity = 4,
+                product = canvas,
+                createdAt = fortyDaysAgo
+            )
+        )
 
+        val cartItem5 = cartItemRepository.save(
+            CartItem(
+                option = acrylics.options[2],
+                cart = minasCart,
+                quantity = 3,
+                product = acrylics,
+                createdAt = fortyDaysAgo
+            )
+        )
+        val cartItem6 = cartItemRepository.save(
+            CartItem(
+                option = pen.options[0],
+                cart = minasCart,
+                quantity = 2,
+                product = pen,
+                createdAt = fortyDaysAgo
+            )
+        )
+
+        // updatedAt 세팅
         cartItem1.updatedAt = LocalDateTime.now()
         cartItem2.updatedAt = LocalDateTime.now()
         cartItem3.updatedAt = LocalDateTime.now()
@@ -90,18 +138,12 @@ class StatisticsE2ETest {
         cartItem6.updatedAt = fortyDaysAgo
 
         cartItemRepository.saveAll(
-            listOf(
-                cartItem1,
-                cartItem2,
-                cartItem3,
-                cartItem4,
-                cartItem5,
-                cartItem6,
-            ),
+            listOf(cartItem1, cartItem2, cartItem3, cartItem4, cartItem5, cartItem6)
         )
 
         mostRecentCartItems = listOf(cartItem1, cartItem2, cartItem3)
     }
+
 
     @AfterEach
     fun tearDown() {
@@ -166,7 +208,7 @@ class StatisticsE2ETest {
         val json = stats.body().jsonPath()
         val productNames = json.getList<String>("productName")
         val topProducts =
-            listOf(mostRecentCartItems[0].product.name, mostRecentCartItems[1].product.name, mostRecentCartItems[2].product.name)
+            listOf(mostRecentCartItems[0].option.name, mostRecentCartItems[1].option.name, mostRecentCartItems[2].option.name)
         assertThat(productNames).containsExactlyInAnyOrderElementsOf(topProducts)
     }
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository
 interface CartRepository : JpaRepository<Cart, Long> {
     fun findCartByMemberId(memberId: Long): Cart?
 
-    @Query(GET_ALL_PROPERTIES,)
+    @Query(GET_ALL_PROPERTIES)
     fun findCartWithAllByMemberId(
         @Param("memberId") memberId: Long,
     ): Cart?

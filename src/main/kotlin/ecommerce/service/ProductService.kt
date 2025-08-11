@@ -1,11 +1,14 @@
 package ecommerce.service
 
 import ecommerce.dto.OptionResponse
+import ecommerce.dto.PendingOption
+import ecommerce.dto.PendingProduct
 import ecommerce.dto.ProductRequest
 import ecommerce.dto.ProductResponse
 import ecommerce.dto.UpsertStatus.CREATED
 import ecommerce.dto.UpsertStatus.UPDATED
 import ecommerce.exception.ConflictException
+import ecommerce.exception.DuplicateOptionNameException
 import ecommerce.model.Product
 import ecommerce.model.mapper.OptionMapper
 import ecommerce.repository.ProductRepository
@@ -19,7 +22,6 @@ import kotlin.math.min
 @Service
 class ProductService(
     private val productRepository: ProductRepository,
-    private val productFactory: ProductFactory,
 ) {
     fun create(request: ProductRequest): Long {
         require(!request.options.isNullOrEmpty()) { "options must not be empty" }
@@ -27,8 +29,21 @@ class ProductService(
         if (productRepository.existsByName(request.name)) {
             throw ConflictException("Product with name ${request.name} already exists")
         }
-        val product = productFactory.from(request)
+
+        val product = createProductWith(request)
         return productRepository.save(product).id
+    }
+
+    private fun createProductWith(request: ProductRequest): Product {
+
+        require(!request.options.isNullOrEmpty()) { "Product must have at least one option" }
+        require(request.options.distinct().size == request.options.size) {
+            throw DuplicateOptionNameException("Duplicate option found in new options")
+        }
+
+        val pendingOptions = PendingOption.from(request)
+        val pendingProduct = PendingProduct.from(request)
+        return Product.withOption(pendingProduct, pendingOptions)
     }
 
     @Transactional(readOnly = true)
