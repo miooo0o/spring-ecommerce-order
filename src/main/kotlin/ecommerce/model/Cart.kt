@@ -59,7 +59,6 @@ class Cart(
         quantity: Int,
     ): CartItem {
         existingItem.changeQuantityTo(quantity)
-        existingItem.markAsUpdated()
         return existingItem
     }
 

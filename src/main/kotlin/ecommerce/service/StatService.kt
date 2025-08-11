@@ -19,7 +19,7 @@ class StatService(
 
         val members =
             cartItems
-                .map { it.getMember() }
+                .map { it.member }
                 .distinctBy { it.id }
 
         return members.map { MemberStatsResponse(it.id, it.name, it.email) }
