@@ -28,8 +28,7 @@ class Order(
         fetch = FetchType.LAZY,
     )
     val orderItems: MutableList<OrderItem> = mutableListOf(),
-    @Column(nullable = false, scale = 2)
-    private var _total: BigDecimal = BigDecimal.ZERO,
+    val currency: String = ALLOWED_CURRENCY[0],
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     val createdAt: LocalDateTime? = null,
@@ -40,14 +39,21 @@ class Order(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    val totalAmount: BigDecimal
-        get() = _total
+    @Column(nullable = false, scale = 2)
+    private var _totalMajor: BigDecimal = BigDecimal.ZERO
+
+    val totalMajor: BigDecimal get() = _totalMajor
+    val totalMinor: Long get() = toMinor()
+
+    init {
+        require(ALLOWED_CURRENCY.any { it == currency })
+    }
 
     fun addItems(items: List<OrderItem>) {
         require(items.isNotEmpty()) { "Items must not be empty" }
 
         items.forEach { addItem(it) }
-        recalcTotal()
+        recalcTotalMajor()
     }
 
     private fun addItem(item: OrderItem) {
@@ -55,22 +61,25 @@ class Order(
         orderItems.add(item)
     }
 
-    private fun recalcTotal() {
-        _total =
-            orderItems.fold(BigDecimal.ZERO) { acc, i ->
-                acc + (i.unitPrice * BigDecimal(i.quantity))
+    private fun recalcTotalMajor() {
+        val sum =
+            orderItems.fold(BigDecimal.ZERO) { acc, item ->
+                acc.plus(BigDecimal(item.unitPrice) * BigDecimal(item.quantity))
             }
-        require(totalAmount >= BigDecimal(0.50)) { "minimum total amount must be 0.5" }
+        require(sum >= BigDecimal(MIN_CALCULATED_AMOUNT)) { "minimum total amount must be 0.5" }
+        _totalMajor = sum
     }
 
-    val stripeAmount: Long
-        get() = toMinorUnitLong()
-
-    private fun toMinorUnitLong() =
-        totalAmount
-            .multiply(BigDecimal(100))
+    fun toMinor(): Long {
+        return _totalMajor
+            .multiply(BigDecimal.TEN.pow(MINOR_SCALE))
             .setScale(0, RoundingMode.HALF_UP)
-            .toLong()
+            .longValueExact()
+    }
 
-    // TODO: Separate to Money class
+    companion object {
+        private val ALLOWED_CURRENCY = listOf("EUR")
+        private const val MINOR_SCALE = 2
+        private const val MIN_CALCULATED_AMOUNT = 0.50
+    }
 }
