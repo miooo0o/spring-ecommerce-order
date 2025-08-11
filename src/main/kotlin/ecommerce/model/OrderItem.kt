@@ -25,7 +25,7 @@ class OrderItem(
     @field:Size(max = 100)
     @field:NotBlank
     @Column(nullable = false)
-    val productName: String,
+    val itemName: String,
     @Column(nullable = false)
     @Positive
     val unitPrice: Long,
@@ -37,7 +37,7 @@ class OrderItem(
     val id: Long = 0L,
 ) {
     init {
-        require(productName.isNotEmpty()) { "Product name can not be empty" }
+        require(itemName.isNotEmpty()) { "Product name can not be empty" }
         require(unitPrice > 0L) { "Unit price must be positive" }
         require(unitPrice > Order.MIN_CALCULATED_AMOUNT * 100) { "Unit price must be positive" }
         require(quantity > 0) { "Quantity must be positive" }

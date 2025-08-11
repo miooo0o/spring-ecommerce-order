@@ -30,24 +30,27 @@ class Cart(
 ) {
     fun addItem(
         product: Product,
+        option: Option,
         quantity: Int,
     ): CartItem {
         require(quantity > 0) { "Item quantity must be greater than zero." }
         val existingItem = items.find { it.product.id == product.id }
         return when (existingItem) {
-            null -> addNewItem(product, quantity)
-            else -> updateExistingItem(existingItem, quantity)
+            null -> addNewItem(product, option, quantity)
+            else -> updateExistingItem(existingItem, option, quantity)
         }
     }
 
     private fun addNewItem(
         product: Product,
+        option: Option,
         quantity: Int,
     ): CartItem {
         val newItem =
             CartItem(
                 product = product,
                 cart = this,
+                option = option,
                 quantity = quantity,
             )
         items.add(newItem)
@@ -56,9 +59,15 @@ class Cart(
 
     private fun updateExistingItem(
         existingItem: CartItem,
+        option: Option,
         quantity: Int,
     ): CartItem {
-        existingItem.changeQuantityTo(quantity)
+        when (existingItem.option) {
+            option -> existingItem.changeQuantityTo(quantity)
+            else -> existingItem.overrideOptionWith(option, quantity)
+        }
+        if (existingItem.option === option)
+            existingItem.changeQuantityTo(quantity)
         return existingItem
     }
 

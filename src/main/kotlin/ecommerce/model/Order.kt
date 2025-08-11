@@ -1,5 +1,6 @@
 package ecommerce.model
 
+import ecommerce.dto.OrderRequest
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -81,5 +82,15 @@ class Order(
         private val ALLOWED_CURRENCY = listOf("EUR")
         private const val MINOR_SCALE = 2
         const val MIN_CALCULATED_AMOUNT = 0.50
+
+        fun from(
+            cart: Cart,
+            request: OrderRequest,
+        ): Order {
+            return Order(
+                member = cart.member,
+                currency = request.currency.uppercase(),
+            )
+        }
     }
 }
