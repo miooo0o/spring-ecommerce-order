@@ -1,7 +1,33 @@
 # spring-ecommerce-order
-
-
 ## Feature List
+### Step 2
+#### todo
+- [ ] Change CartItem's property: make reference Option instead of Product
+  - [x] Refactor Option to decouple it from Product
+  - [x] Clean up code to make it testable
+  - [ ] Make to pass all tests
+#### 1. Place Order
+- [ ] Configure Stripe **sandbox secret key** in environment variables (`STRIPE_SECRET_KEY`).
+- [ ] Implement `POST /orders` endpoint.
+  - [ ] Implement new entities `Option`, `OptionItem`
+  - [ ] Accept `optionId`, `quantity`, `paymentMethodId` as request parameters.
+  - [ ] Call Stripe Payment Create API with the provided details.
+  - [ ] On success:
+    - [ ] Decrease stock for the selected product option.
+    - [ ] Remove the product from the user's cart if it exists.
+    - [ ] Save the order record.
+  - [ ] On failure:
+    - [ ] Parse `error_code` / `decline_code` from Stripe’s response.
+    - [ ] Map to basic error messages:
+      - `expired_card` → "Card expired"
+      - `incorrect_cvc` → "Incorrect CVC"
+      - `insufficient_funds` → "Insufficient funds"
+      - Other → "Payment failed"
+- [ ] Roll back stock/cart changes if payment fails.
+- [ ] Handle network or Stripe API errors by returning a "Temporary payment error" message.
+
+---
+
 ### Step 1-2 - first Refactoring
 
 #### Todo
