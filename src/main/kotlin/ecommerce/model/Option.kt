@@ -7,9 +7,11 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 
 @Entity
-class Option(
+@Table(name = "options")
+open class Option(
     @Column(nullable = false)
     val name: String = "",
     @Column(nullable = false)
@@ -20,12 +22,13 @@ class Option(
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
     lateinit var product: Product
-
-    init {
-        require(quantity in 1 until MAX_QUANTITY) { "quantity must be in range 1.. $MAX_QUANTITY" }
-        require(name.length <= MAX_NAME_LENGTH) { "name length must be <= 50 characters" }
-        require(name.all { it.isLetterOrDigit() || it in ALLOWED_SPECIAL_CHARS })
-    }
+//
+//    init {
+//        require(quantity in 1 until MAX_QUANTITY) { "quantity must be in range 1.. $MAX_QUANTITY" }
+//        require(name.length <= MAX_NAME_LENGTH) { "name length must be <= 50 characters" }
+// //        require(name.isNotEmpty()) { "name must not be empty" }
+// //        require(name.all { it.isLetterOrDigit() || it in ALLOWED_SPECIAL_CHARS })
+//    }
 
     fun decreaseQuantity(quantity: Int) {
         require(quantity > 0) { "quantity must be positive" }

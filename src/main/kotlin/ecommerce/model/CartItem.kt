@@ -11,23 +11,12 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
-/**
- * Table cart_items {
- *   cart_id bigint [ref: > carts.id]
- *   product_id bigint [ref: > products.id]
- *   quantity int [default: 1]
- *   created_at timestamp [default: current_timestamp]
- *   id bigint [pk, increment]
- * }
- *
- * CartItem is child of Cart
- */
 @Entity
 @Table(name = "cart_items")
 class CartItem(
     @JoinColumn(name = "product_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    var product: Product,
+    var option: Option,
     @JoinColumn(name = "cart_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     var cart: Cart,
@@ -41,8 +30,9 @@ class CartItem(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    val member: Member
-        get() = cart.member
+    val member: Member get() = cart.member
+
+    val product: Product get() = option.product
 
     fun changeQuantityTo(quantity: Int) {
         require(quantity > 0) { "quantity must be positive" }

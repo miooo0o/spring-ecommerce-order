@@ -29,24 +29,24 @@ class Cart(
     val id: Long = 0L,
 ) {
     fun addItem(
-        product: Product,
+        option: Option,
         quantity: Int,
     ): CartItem {
         require(quantity > 0) { "Item quantity must be greater than zero." }
-        val existingItem = items.find { it.product.id == product.id }
+        val existingItem = items.find { it.option.id == option.id }
         return when (existingItem) {
-            null -> addNewItem(product, quantity)
+            null -> addNewItem(option, quantity)
             else -> updateExistingItem(existingItem, quantity)
         }
     }
 
     private fun addNewItem(
-        product: Product,
+        option: Option,
         quantity: Int,
     ): CartItem {
         val newItem =
             CartItem(
-                product = product,
+                option = option,
                 cart = this,
                 quantity = quantity,
             )
@@ -62,9 +62,9 @@ class Cart(
         return existingItem
     }
 
-    fun removeItem(product: Product) {
+    fun removeItem(option: Option) {
         val existingItem =
-            items.find { it.product.id == product.id }
+            items.find { it.option.id == option.id }
                 ?: throw IllegalArgumentException("Item not found.")
         items.remove(existingItem)
     }

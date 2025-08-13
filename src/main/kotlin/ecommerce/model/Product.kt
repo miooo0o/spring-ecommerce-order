@@ -24,7 +24,12 @@ class Product(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
-    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(
+        mappedBy = "product",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+        fetch = FetchType.LAZY,
+    )
     val options: MutableList<Option> = mutableListOf()
 
     fun addOptions(newOptions: List<Option>): Product {
