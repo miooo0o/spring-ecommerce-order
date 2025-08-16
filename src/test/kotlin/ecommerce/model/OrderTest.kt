@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import java.math.BigDecimal
 
 class OrderTest {
     @Test
@@ -20,10 +21,9 @@ class OrderTest {
             val order = Order(member)
             val orderItem =
                 OrderItem(
-                    order,
                     product.options[0],
                     product.name + product.options[0].name,
-                    (product.price * 100).toLong(),
+                    BigDecimal(product.price),
                     1,
                 )
         }
@@ -52,32 +52,5 @@ class OrderTest {
 
         assertThat(order.orderItems).isNotEmpty()
         assertThat(itemsList).isEqualTo(order.orderItems.toList())
-    }
-
-    @Test
-    fun `should add only items belonging to this order`() {
-        val fixtureByMina =
-            OrderTestFixture(
-                BasicTestFixture.MINA,
-                listOf(createBrushWithOptions()),
-            )
-
-        val fixtureByPetra =
-            OrderTestFixture(
-                BasicTestFixture.PETRA,
-                listOf(
-                    createProductWithOptions(PAINTING_SAD_HUMAN),
-                    createProductWithOptions(createCanvas()),
-                ),
-            )
-
-        val orderByPetra = fixtureByPetra.order
-        val itemListBelongToMina = fixtureByMina.validOrderItemsList
-
-        assertThat(orderByPetra.orderItems).isEmpty()
-
-        assertThrows<IllegalArgumentException> {
-            orderByPetra.addItems(itemListBelongToMina)
-        }
     }
 }

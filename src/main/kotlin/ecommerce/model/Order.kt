@@ -22,7 +22,6 @@ class Order(
     @ManyToOne(fetch = FetchType.LAZY)
     val member: Member,
     @OneToMany(
-        mappedBy = "order",
         cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE],
         orphanRemoval = true,
         fetch = FetchType.LAZY,
@@ -57,14 +56,13 @@ class Order(
     }
 
     private fun addItem(item: OrderItem) {
-        require(item.order === this) { "Item does not belong to this order" }
         orderItems.add(item)
     }
 
     private fun recalcTotalMajor() {
         val sum =
             orderItems.fold(BigDecimal.ZERO) { acc, item ->
-                acc.plus(BigDecimal(item.unitPrice) * BigDecimal(item.quantity))
+                acc.plus(item.unitPrice * BigDecimal(item.quantity))
             }
         require(sum >= BigDecimal(MIN_CALCULATED_AMOUNT)) { "minimum total amount must be 0.5" }
         _totalMajor = sum

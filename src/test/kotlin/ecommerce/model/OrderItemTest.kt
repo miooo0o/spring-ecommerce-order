@@ -9,6 +9,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import java.math.BigDecimal
 
 class OrderItemTest {
     @Test
@@ -32,10 +33,9 @@ class OrderItemTest {
                 val optionIndex = orderTestFixture.optionIndex
                 orderTestFixture.products.map { product ->
                     OrderItem(
-                        orderTestFixture.order,
                         product.options[orderTestFixture.optionIndex],
                         product.name + product.options[optionIndex].name,
-                        (price * 100).toLong(),
+                        BigDecimal(price),
                         product.options[optionIndex].quantity + 1,
                     )
                 }
@@ -55,10 +55,9 @@ class OrderItemTest {
                 val optionIndex = orderTestFixture.optionIndex
                 orderTestFixture.products.map { product ->
                     OrderItem(
-                        orderTestFixture.order,
                         product.options[orderTestFixture.optionIndex],
                         product.name + product.options[optionIndex].name,
-                        (product.price * 100).toLong(),
+                        BigDecimal(product.price),
                         quantity,
                     )
                 }
@@ -77,10 +76,9 @@ class OrderItemTest {
                 val optionIndex = orderTestFixture.optionIndex
                 orderTestFixture.products.map { product ->
                     OrderItem(
-                        orderTestFixture.order,
                         product.options[orderTestFixture.optionIndex],
                         product.name + product.options[optionIndex].name,
-                        (product.price * 100).toLong(),
+                        BigDecimal(product.price),
                         product.options[optionIndex].quantity + 1,
                     )
                 }
