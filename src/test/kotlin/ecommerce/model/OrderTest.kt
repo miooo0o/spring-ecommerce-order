@@ -1,15 +1,11 @@
 package ecommerce.model
 
 import ecommerce.BasicTestFixture
-import ecommerce.BasicTestFixture.PAINTING_SAD_HUMAN
 import ecommerce.BasicTestFixture.createBrushWithOptions
-import ecommerce.BasicTestFixture.createCanvas
-import ecommerce.BasicTestFixture.createProductWithOptions
 import ecommerce.OrderTestFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 
 class OrderTest {
@@ -17,40 +13,59 @@ class OrderTest {
     fun `create order and order item for unit test`() {
         assertDoesNotThrow {
             val member = BasicTestFixture.MINA
-            val product = createBrushWithOptions()
-            val order = Order(member)
-            val orderItem =
-                OrderItem(
-                    product.options[0],
-                    product.name + product.options[0].name,
-                    BigDecimal(product.price),
-                    1,
-                )
+            val products = listOf(createBrushWithOptions())
+            val cart =
+                Cart(member).apply {
+                    products.forEach { product ->
+                        addItem(
+                            option = product.options[0],
+                            quantity = 1,
+                        )
+                    }
+                }
+            val order = Order.fromCart(cart, currency = "EUR")
         }
 
         assertDoesNotThrow {
-            val member = BasicTestFixture.MINA
-            val product = createBrushWithOptions()
-            val orderTestFixture = OrderTestFixture(member, listOf(product))
+            OrderTestFixture(
+                BasicTestFixture.MINA,
+                listOf(createBrushWithOptions()),
+            )
         }
     }
 
     @Test
     fun `should add all given items to order`() {
-        val orderTestFixture =
-            OrderTestFixture(
-                BasicTestFixture.MINA,
-                listOf(createBrushWithOptions()),
-            )
+        val member = BasicTestFixture.MINA
+        val products = listOf(createBrushWithOptions())
+        val cart =
+            Cart(member).apply {
+                products.forEach { product ->
+                    addItem(
+                        option = product.options[0],
+                        quantity = 1,
+                    )
+                }
+            }
+        val order = Order.fromCart(cart, currency = "EUR")
 
-        val order = orderTestFixture.order
-        val itemsList = orderTestFixture.validOrderItemsList
+        val orderItemListsManual: List<OrderItem> =
+            cart.items.map { cartItem ->
+                OrderItem(
+                    option = cartItem.option,
+                    productName = cartItem.product.name,
+                    unitPrice = BigDecimal(cartItem.product.price),
+                    quantity = cartItem.quantity,
+                )
+            }
 
-        assertThat(order.orderItems).isEmpty()
+        assertThat(order.orderItems.map { it.productName })
+            .containsExactlyElementsOf(orderItemListsManual.map { it.productName })
 
-        order.addItems(itemsList)
+        assertThat(order.orderItems.map { it.unitPrice })
+            .containsExactlyElementsOf(orderItemListsManual.map { it.unitPrice })
 
-        assertThat(order.orderItems).isNotEmpty()
-        assertThat(itemsList).isEqualTo(order.orderItems.toList())
+        assertThat(order.orderItems.map { it.quantity })
+            .containsExactlyElementsOf(orderItemListsManual.map { it.quantity })
     }
 }

@@ -1,5 +1,6 @@
 package ecommerce
 
+import ecommerce.model.Cart
 import ecommerce.model.Member
 import ecommerce.model.Order
 import ecommerce.model.OrderItem
@@ -11,15 +12,25 @@ class OrderTestFixture(
     val products: List<Product>,
     val optionIndex: Int = 0,
 ) {
-    val order = Order(member)
-    val validOrderItemsList: List<OrderItem> = products.map { it.toOrderItemWith(order) }
+    val cart: Cart =
+        Cart(member).apply {
+            products.forEach { product ->
+                addItem(
+                    option = product.options[optionIndex],
+                    quantity = 1,
+                )
+            }
+        }
 
-    private fun Product.toOrderItemWith(order: Order): OrderItem {
-        return OrderItem(
-            this.options[optionIndex],
-            this.name + this.options[optionIndex].name,
-            BigDecimal(this.price),
-            1,
-        )
-    }
+    val order: Order = Order.fromCart(cart, currency = "EUR")
+
+    val validOrderItemsList: List<OrderItem> =
+        cart.items.map { cartItem ->
+            OrderItem(
+                option = cartItem.option,
+                productName = cartItem.product.name,
+                unitPrice = BigDecimal(cartItem.product.price),
+                quantity = cartItem.quantity,
+            )
+        }
 }

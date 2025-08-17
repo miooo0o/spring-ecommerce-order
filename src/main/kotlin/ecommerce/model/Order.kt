@@ -1,5 +1,6 @@
 package ecommerce.model
 
+import ecommerce.model.mapper.toOrderItems
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -18,7 +19,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "orders")
-class Order(
+class Order private constructor(
     @ManyToOne(fetch = FetchType.LAZY)
     val member: Member,
     @OneToMany(
@@ -59,6 +60,13 @@ class Order(
         orderItems.add(item)
     }
 
+    private fun addItemsFromCart(cart: Cart): Order {
+        require(cart.items.isNotEmpty()) { "Items must not be empty" }
+        this.orderItems.addAll(cart.items.toOrderItems())
+        recalcTotalMajor()
+        return this
+    }
+
     private fun recalcTotalMajor() {
         val sum =
             orderItems.fold(BigDecimal.ZERO) { acc, item ->
@@ -79,5 +87,13 @@ class Order(
         private val ALLOWED_CURRENCY = listOf("EUR")
         private const val MINOR_SCALE = 2
         const val MIN_CALCULATED_AMOUNT = 0.50
+
+        fun fromCart(
+            cart: Cart,
+            currency: String,
+        ): Order {
+            val order = Order(member = cart.member, currency = currency)
+            return order.addItemsFromCart(cart)
+        }
     }
 }
