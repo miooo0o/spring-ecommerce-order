@@ -34,7 +34,7 @@ class Order private constructor(
     val createdAt: LocalDateTime? = null,
     @UpdateTimestamp
     @Column(nullable = false)
-    var lastUpdatedAt: LocalDateTime? = null,
+    var updatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
@@ -89,7 +89,6 @@ class Order private constructor(
         private const val MINOR_SCALE = 2
         const val MIN_AMOUNT_DOUBLE = 0.50
         val MIN_AMOUNT_BIG_DECIMAL = BigDecimal(0.50)
-
 
         fun fromCart(
             cart: Cart,
