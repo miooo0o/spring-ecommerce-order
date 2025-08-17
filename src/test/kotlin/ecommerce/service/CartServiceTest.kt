@@ -16,6 +16,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.context.jdbc.Sql
 
 @DataJpaTest
 @Import(CartService::class)
@@ -35,7 +36,8 @@ class CartServiceTest {
             val member = memberRepository.save(createPetra())
             val fixture = BasicTestFixture.createBrushWithOptions()
             val product = productRepository.save(fixture)
-            val request = CartItemRequest(product.id, 1)
+            val firstOption = product.options.first()
+            val request = CartItemRequest(firstOption.id, 1)
 
             val cartItem = cartService.addItem(member.id, request)
             cartItem.cart
@@ -47,7 +49,9 @@ class CartServiceTest {
         val member = memberRepository.save(createMina())
         val fixture = BasicTestFixture.createProductWithOptions(createPaintingSadHuman())
         val product = productRepository.save(fixture)
-        val request = CartItemRequest(product.id, 1)
+
+        val firstOption = product.options.first()
+        val request = CartItemRequest(firstOption.id, 1)
 
         val cartItem = cartService.addItem(member.id, request)
         assertThat(cartItem.product.name).isEqualTo(PAINTING_SAD_HUMAN.name)
@@ -58,12 +62,12 @@ class CartServiceTest {
         val member = memberRepository.save(createAdmin())
         val fixture = BasicTestFixture.createProductWithOptions(createPaintingHappyHuman())
         val savedProduct = productRepository.save(fixture)
-        println("Options count: ${savedProduct.options.size}")
 
-        val addRequest = CartItemRequest(savedProduct.id, 1)
+        val firstOption = savedProduct.options.first()
+        val addRequest = CartItemRequest(firstOption.id, 1)
 
         val cartItem = cartService.addItem(member.id, addRequest)
-        val deleteRequest = CartItemRequest(cartItem.product.id, 1)
+        val deleteRequest = CartItemRequest(firstOption.id, 1)
 
         assertDoesNotThrow {
             cartService.deleteItem(member.id, deleteRequest)
