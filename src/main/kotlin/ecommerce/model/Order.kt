@@ -27,7 +27,7 @@ class Order private constructor(
         orphanRemoval = true,
         fetch = FetchType.LAZY,
     )
-    val orderItems: MutableList<OrderItem> = mutableListOf(),
+    val items: MutableList<OrderItem> = mutableListOf(),
     val currency: String = ALLOWED_CURRENCY[0],
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
@@ -57,22 +57,23 @@ class Order private constructor(
     }
 
     private fun addItem(item: OrderItem) {
-        orderItems.add(item)
+        items.add(item)
     }
 
     private fun addItemsFromCart(cart: Cart): Order {
         require(cart.items.isNotEmpty()) { "Items must not be empty" }
-        this.orderItems.addAll(cart.items.toOrderItems())
+
+        this.items.addAll(cart.items.toOrderItems())
         recalcTotalMajor()
         return this
     }
 
     private fun recalcTotalMajor() {
         val sum =
-            orderItems.fold(BigDecimal.ZERO) { acc, item ->
+            items.fold(BigDecimal.ZERO) { acc, item ->
                 acc.plus(item.unitPrice * BigDecimal(item.quantity))
             }
-        require(sum >= BigDecimal(MIN_CALCULATED_AMOUNT)) { "minimum total amount must be 0.5" }
+        require(sum >= MIN_AMOUNT_BIG_DECIMAL) { "minimum total amount must be 0.5" }
         _totalMajor = sum
     }
 
@@ -86,7 +87,9 @@ class Order private constructor(
     companion object {
         private val ALLOWED_CURRENCY = listOf("EUR")
         private const val MINOR_SCALE = 2
-        const val MIN_CALCULATED_AMOUNT = 0.50
+        const val MIN_AMOUNT_DOUBLE = 0.50
+        val MIN_AMOUNT_BIG_DECIMAL = BigDecimal(0.50)
+
 
         fun fromCart(
             cart: Cart,

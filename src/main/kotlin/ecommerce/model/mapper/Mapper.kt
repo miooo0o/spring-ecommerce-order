@@ -42,7 +42,7 @@ private fun CartItem.toOrderItem() =
 
 fun Order.toPaymentRequest(paymentMethod: String): PaymentRequest {
     return PaymentRequest(
-        totalAmount = this.totalMinor.toInt(),
+        amount = this.totalMinor.toInt(),
         currency = this.currency,
         paymentMethod = paymentMethod,
     )
