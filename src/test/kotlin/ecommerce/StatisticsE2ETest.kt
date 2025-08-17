@@ -74,7 +74,7 @@ class StatisticsE2ETest {
         ): Option {
             val savedProduct = productRepository.save(product)
             val option =
-                Option(name = optionName, quantity = qty).apply {
+                Option(name = optionName, availableStock = qty).apply {
                     this.product = savedProduct
                 }
             return optionRepository.save(option)

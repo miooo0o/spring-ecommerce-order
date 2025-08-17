@@ -59,13 +59,13 @@ class OrderTest {
                 )
             }
 
-        assertThat(order.orderItems.map { it.productName })
+        assertThat(order.items.map { it.productName })
             .containsExactlyElementsOf(orderItemListsManual.map { it.productName })
 
-        assertThat(order.orderItems.map { it.unitPrice })
+        assertThat(order.items.map { it.unitPrice })
             .containsExactlyElementsOf(orderItemListsManual.map { it.unitPrice })
 
-        assertThat(order.orderItems.map { it.quantity })
+        assertThat(order.items.map { it.quantity })
             .containsExactlyElementsOf(orderItemListsManual.map { it.quantity })
     }
 }

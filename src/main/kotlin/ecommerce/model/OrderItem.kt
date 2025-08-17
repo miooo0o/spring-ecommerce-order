@@ -39,6 +39,6 @@ class OrderItem(
         require(unitPrice > BigDecimal.ZERO) { "Unit price must be positive" }
         require(unitPrice > BigDecimal(Order.MIN_CALCULATED_AMOUNT)) { "Unit price must be positive" }
         require(quantity > 0) { "Quantity must be positive" }
-        require(quantity <= option.quantity) { "Quantity must be small or equal with option.quantity" }
+        require(quantity <= option.availableStock) { "Quantity must be small or equal with option.quantity" }
     }
 }

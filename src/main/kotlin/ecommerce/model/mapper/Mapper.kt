@@ -2,8 +2,10 @@ package ecommerce.model.mapper
 
 import ecommerce.dto.CartItemResponse
 import ecommerce.dto.OptionResponse
+import ecommerce.dto.PaymentRequest
 import ecommerce.model.CartItem
 import ecommerce.model.Option
+import ecommerce.model.Order
 import ecommerce.model.OrderItem
 import java.math.BigDecimal
 
@@ -24,7 +26,7 @@ object OptionMapper {
         OptionResponse(
             optionId = option.id,
             name = option.name,
-            quantity = option.quantity,
+            quantity = option.availableStock,
         )
 }
 
@@ -37,3 +39,11 @@ private fun CartItem.toOrderItem() =
         unitPrice = BigDecimal(this.product.price),
         quantity = this.quantity,
     )
+
+fun Order.toPaymentRequest(paymentMethod: String): PaymentRequest {
+    return PaymentRequest(
+        totalAmount = this.totalMinor.toInt(),
+        currency = this.currency,
+        paymentMethod = paymentMethod,
+    )
+}

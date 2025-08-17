@@ -36,7 +36,7 @@ class OrderItemTest {
                         product.options[orderTestFixture.optionIndex],
                         product.name + product.options[optionIndex].name,
                         BigDecimal(price),
-                        product.options[optionIndex].quantity + 1,
+                        product.options[optionIndex].availableStock + 1,
                     )
                 }
             }
@@ -79,7 +79,7 @@ class OrderItemTest {
                         product.options[orderTestFixture.optionIndex],
                         product.name + product.options[optionIndex].name,
                         BigDecimal(product.price),
-                        product.options[optionIndex].quantity + 1,
+                        product.options[optionIndex].availableStock + 1,
                     )
                 }
             }
