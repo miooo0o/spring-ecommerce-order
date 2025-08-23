@@ -1,6 +1,6 @@
 package ecommerce.service
 
-import ecommerce.exception.StockConflictException
+import ecommerce.exception.OrderStockConflictException
 import ecommerce.model.Order
 import ecommerce.model.OrderItem
 import ecommerce.repository.OrderRepository
@@ -24,7 +24,7 @@ class OrderService(
     fun validateStockForPayment(orderItems: List<OrderItem>) {
         val errors = validateStock(orderItems)
         if (errors.isNotEmpty()) {
-            throw StockConflictException("Stock changed during payment processing", errors)
+            throw OrderStockConflictException("Stock changed during payment processing", errors)
         }
     }
 

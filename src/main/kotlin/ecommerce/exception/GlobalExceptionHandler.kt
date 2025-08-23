@@ -15,7 +15,12 @@ class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", errors)
     }
 
-    @ExceptionHandler(ConflictException::class)
+    @ExceptionHandler(
+        value = [
+            ConflictException::class,
+            OrderStockConflictException::class,
+        ],
+    )
     fun handleConflict(e: ConflictException): ResponseEntity<ErrorResponse> {
         return buildErrorResponse(HttpStatus.CONFLICT, e.message)
     }
@@ -62,13 +67,14 @@ class GlobalExceptionHandler {
     private fun buildErrorResponse(
         status: HttpStatus,
         message: String?,
-        errors: List<String>? = null
+        errors: List<String>? = null,
     ): ResponseEntity<ErrorResponse> {
-        val response = ErrorResponse(
-            status = status.value(),
-            message = message,
-            errors = errors,
-        )
+        val response =
+            ErrorResponse(
+                status = status.value(),
+                message = message,
+                errors = errors,
+            )
         return ResponseEntity.status(status).body(response)
     }
 }
