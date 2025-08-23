@@ -22,7 +22,7 @@ class OrderTestFixture(
             }
         }
 
-    val order: Order = Order.fromCart(cart, currency = "EUR")
+    val order: Order = Order.fromCart(cart)
 
     val validOrderItemsList: List<OrderItem> =
         cart.items.map { cartItem ->

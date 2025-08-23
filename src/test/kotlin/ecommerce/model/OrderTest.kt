@@ -23,7 +23,7 @@ class OrderTest {
                         )
                     }
                 }
-            val order = Order.fromCart(cart, currency = "EUR")
+            val order = Order.fromCart(cart)
         }
 
         assertDoesNotThrow {
@@ -47,7 +47,7 @@ class OrderTest {
                     )
                 }
             }
-        val order = Order.fromCart(cart, currency = "EUR")
+        val order = Order.fromCart(cart)
 
         val orderItemListsManual: List<OrderItem> =
             cart.items.map { cartItem ->

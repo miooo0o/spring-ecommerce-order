@@ -1,8 +1,8 @@
 package ecommerce.model.mapper
 
 import ecommerce.dto.CartItemResponse
+import ecommerce.dto.CheckoutRequest
 import ecommerce.dto.OptionResponse
-import ecommerce.dto.PaymentRequest
 import ecommerce.model.CartItem
 import ecommerce.model.Option
 import ecommerce.model.Order
@@ -40,10 +40,11 @@ private fun CartItem.toOrderItem() =
         quantity = this.quantity,
     )
 
-fun Order.toPaymentRequest(paymentMethod: String): PaymentRequest {
-    return PaymentRequest(
-        amount = this.totalMinor.toInt(),
-        currency = this.currency,
+fun Order.toPaymentRequest(paymentMethod: String): CheckoutRequest {
+    return CheckoutRequest(
+        orderId = this.id,
+        amount = this.totalMinor,
+        currency = "eur",
         paymentMethod = paymentMethod,
     )
 }
