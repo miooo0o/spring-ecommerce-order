@@ -32,7 +32,6 @@ class CheckoutService(
     }
 
     fun executePayment(request: CheckoutRequest): Payment {
-
         val paymentIntent = stripeClient.makePayment(request)
 
         val payment =
@@ -46,7 +45,10 @@ class CheckoutService(
         return paymentRepository.save(payment)
     }
 
-    fun processCheckout(member: RegisteredMember, request: CheckoutRequest): Order {
+    fun processCheckout(
+        member: RegisteredMember,
+        request: CheckoutRequest,
+    ): Order {
         val order = orderService.createOrder(member.id)
         if (request.amount != order.totalMinor) throw BadRequestException("Invalid amount")
 

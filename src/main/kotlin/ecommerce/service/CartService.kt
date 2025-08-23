@@ -11,7 +11,6 @@ import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepository
 import ecommerce.repository.OptionRepository
-import ecommerce.repository.ProductRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class CartService(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
     private val memberRepository: MemberRepository,
     private val cartItemRepository: CartItemRepository,
     private val optionRepository: OptionRepository,
@@ -105,7 +103,8 @@ class CartService(
             }
             if (item.option.availableStock < item.quantity) {
                 errors.add(
-                    "${item.product.name}: Not enough stock available. Only ${item.option.availableStock} left, but ${item.quantity} requested.",
+                    "${item.product.name}: Not enough stock available. " +
+                        "Only ${item.option.availableStock} left, but ${item.quantity} requested.",
                 )
             }
         }

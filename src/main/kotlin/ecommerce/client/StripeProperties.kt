@@ -5,5 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties("stripe")
 data class StripeProperties(
     val secretKey: String,
-    val createPaymentIntentUrl: String = "", // TODO: .env setting
+    // TODO: .env setting
+    val createPaymentIntentUrl: String = "",
 )
