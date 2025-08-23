@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @Entity
 class Payment(
     val amount: Long,
-    val currency: String,
+    val currency: String = "eur",
     val paymentMethod: String,
     val paymentIntentId: String,
     val clientSecret: String,

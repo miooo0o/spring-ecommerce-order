@@ -21,6 +21,10 @@ class OrderService(
         return orderRepository.save(order)
     }
 
+    fun save(order: Order): Order {
+        return orderRepository.save(order)
+    }
+
     fun validateStockForPayment(orderItems: List<OrderItem>) {
         val errors = validateStock(orderItems)
         if (errors.isNotEmpty()) {

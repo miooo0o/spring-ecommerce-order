@@ -23,17 +23,14 @@ open class Option(
     @ManyToOne(fetch = FetchType.LAZY)
     lateinit var product: Product
 
-    fun decreaseStock(stock: Int) {
-        require(stock > 0) { "stock must be positive" }
-        require(this.availableStock > stock) { "cannot decrease quantity of $stock times" }
+    fun decreaseStock(quantity: Int): Option {
+        require(quantity > 0) { "Quantity must be positive, but was: $quantity" }
+        require(this.availableStock >= quantity) {
+            "Insufficient stock: requested $quantity, but only $availableStock available"
+        }
 
-        this.availableStock -= stock
-    }
-
-    fun increaseStock(stock: Int) {
-        require(this.availableStock + stock < MAX_STOCK) { "stock must be positive" }
-
-        this.availableStock += stock
+        this.availableStock -= quantity
+        return this
     }
 
     companion object {
