@@ -1,41 +1,47 @@
 package ecommerce.service
 
-import ecommerce.dto.OrderRequest
+import ecommerce.exception.StockConflictException
 import ecommerce.model.Order
-import ecommerce.model.mapper.toPaymentRequest
+import ecommerce.model.OrderItem
 import ecommerce.repository.OrderRepository
-import ecommerce.service.validator.OrderValidator
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
-@Transactional
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val paymentService: PaymentService,
     private val cartService: CartService,
-    private val orderValidator: OrderValidator,
 ) {
-    fun processOrder(
-        memberId: Long,
-        request: OrderRequest,
-    ) {
-        val order = placeOrder(memberId, request)
-        orderValidator.validateOrderOrThrow(order)
-        val paymentRequest = order.toPaymentRequest(request.paymentMethod)
+    @Transactional
+    fun createOrder(memberId: Long): Order {
+        val cart = cartService.getCartForOrder(memberId)
+        val order = Order.fromCart(cart)
 
-        // TODO: implement payment process here
-        //  and maybe logic will be...
-        //  inventoryService.holdStock(order.items)
-        //  val paymentResponse = paymentService.makePayment(paymentRequest)
+        validateStockForPayment(order.items)
+        return orderRepository.save(order)
     }
 
-    private fun placeOrder(
-        memberId: Long,
-        request: OrderRequest,
-    ): Order {
-        val cart = cartService.getCartForOrder(memberId)
-        val order = Order.fromCart(cart, request.currency)
-        return orderRepository.save(order)
+    fun validateStockForPayment(orderItems: List<OrderItem>) {
+        val errors = validateStock(orderItems)
+        if (errors.isNotEmpty()) {
+            throw StockConflictException("Stock changed during payment processing", errors)
+        }
+    }
+
+    private fun validateStock(orderItems: List<OrderItem>): List<String> {
+        val errors = mutableListOf<String>()
+
+        orderItems.forEachIndexed { index, item ->
+            val itemPrefix = "Item #${index + 1} (${item.productName})"
+
+            if (item.option.availableStock < item.quantity) {
+                errors.add(
+                    "$itemPrefix: Insufficient stock. " +
+                        "Available: ${item.option.availableStock}, Requested: ${item.quantity}",
+                )
+            }
+        }
+
+        return errors
     }
 }

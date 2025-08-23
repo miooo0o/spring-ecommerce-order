@@ -28,7 +28,6 @@ class Order private constructor(
         fetch = FetchType.LAZY,
     )
     val items: MutableList<OrderItem> = mutableListOf(),
-    val currency: String = ALLOWED_CURRENCY[0],
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     val createdAt: LocalDateTime? = null,
@@ -44,10 +43,6 @@ class Order private constructor(
 
     val totalMajor: BigDecimal get() = _totalMajor
     val totalMinor: Long get() = toMinor()
-
-    init {
-        require(ALLOWED_CURRENCY.any { it == currency })
-    }
 
     fun addItems(items: List<OrderItem>) {
         require(items.isNotEmpty()) { "Items must not be empty" }
@@ -85,16 +80,13 @@ class Order private constructor(
     }
 
     companion object {
-        private val ALLOWED_CURRENCY = listOf("EUR")
         private const val MINOR_SCALE = 2
         const val MIN_AMOUNT_DOUBLE = 0.50
         val MIN_AMOUNT_BIG_DECIMAL = BigDecimal(0.50)
 
-        fun fromCart(
-            cart: Cart,
-            currency: String,
-        ): Order {
-            val order = Order(member = cart.member, currency = currency)
+        // TODO: mapper?
+        fun fromCart(cart: Cart): Order {
+            val order = Order(member = cart.member)
             return order.addItemsFromCart(cart)
         }
     }
