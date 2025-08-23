@@ -20,6 +20,8 @@ import org.springframework.test.context.jdbc.Sql
 
 @DataJpaTest
 @Import(CartService::class)
+@Sql(scripts = ["classpath:cleanup.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+// TODO: I'm not sure if it actually makes sense?
 class CartServiceTest {
     @Autowired
     private lateinit var cartService: CartService
