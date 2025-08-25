@@ -40,6 +40,15 @@ class CartService(
                 .orElseThrow { NotFoundException("option not found") }
 
         val item = cart.addItem(option, request.quantity)
+        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() }
+        val product =
+            productRepository.findById(request.productId).orElseThrow { NotFoundException() }
+
+        val cart =
+            cartRepository.findCartByMemberId(memberId)
+                ?: cartRepository.save(Cart(member))
+
+        val item = cart.addItem(product, request.quantity)
         cartRepository.save(cart)
         return item
     }
@@ -54,6 +63,15 @@ class CartService(
                 .orElseThrow { NotFoundException("option not found") }
 
         cart.removeItem(option)
+        val member = memberRepository.findById(memberId).orElseThrow { NotFoundException() }
+        val product =
+            productRepository.findById(request.productId).orElseThrow { NotFoundException() }
+
+        val cart =
+            cartRepository.findCartByMemberId(memberId)
+                ?: cartRepository.save(Cart(member))
+
+        cart.removeItem(product)
         cartRepository.save(cart)
     }
 
