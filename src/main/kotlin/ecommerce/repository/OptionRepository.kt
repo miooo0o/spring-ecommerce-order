@@ -9,10 +9,4 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface OptionRepository : JpaRepository<Option, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT o FROM Option o WHERE o.id = :id")
-    fun findByIdWithLock(
-        @Param("id") id: Long,
-    ): Option?
-}
+interface OptionRepository : JpaRepository<Option, Long>
