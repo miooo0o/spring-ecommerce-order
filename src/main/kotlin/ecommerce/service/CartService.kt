@@ -11,6 +11,7 @@ import ecommerce.repository.CartItemRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.MemberRepository
 import ecommerce.repository.OptionRepository
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -24,6 +25,7 @@ class CartService(
     private val memberRepository: MemberRepository,
     private val cartItemRepository: CartItemRepository,
     private val optionRepository: OptionRepository,
+    private val entityManager: EntityManager,
 ) {
     fun findCart(memberId: Long): Cart {
         return cartRepository.findCartByMemberId(memberId)
@@ -109,5 +111,13 @@ class CartService(
             }
         }
         return errors
+    }
+
+    fun clearCart(memberId: Long) {
+        val cart = getOrCreateCartByMemberId(memberId)
+        cart.items.forEach { cartItem ->
+            entityManager.remove(cartItem)
+        }
+        cart.clear()
     }
 }

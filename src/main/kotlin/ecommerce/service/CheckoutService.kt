@@ -16,6 +16,7 @@ class CheckoutService(
     private val stripeClient: StripeClient,
     private val orderService: OrderService,
     private val paymentRepository: PaymentRepository,
+    private val cartService: CartService,
 ) {
     @Transactional
     fun checkout(
@@ -24,6 +25,7 @@ class CheckoutService(
     ): CheckoutResponse {
         val order = processCheckout(member, request)
         val payment = executePayment(request)
+        cartService.clearCart(member.id)
 
         return CheckoutResponse(
             orderId = order.id,

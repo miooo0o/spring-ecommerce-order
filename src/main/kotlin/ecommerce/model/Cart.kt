@@ -68,4 +68,6 @@ class Cart(
                 ?: throw IllegalArgumentException("Item not found.")
         items.remove(existingItem)
     }
+
+    fun clear() = items.clear()
 }

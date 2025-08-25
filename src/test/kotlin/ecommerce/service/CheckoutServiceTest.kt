@@ -5,10 +5,12 @@ import ecommerce.dto.CheckoutRequest
 import ecommerce.dto.PaymentIntent
 import ecommerce.dto.RegisteredMember
 import ecommerce.dto.Role
+import ecommerce.model.Member
 import ecommerce.model.Option
 import ecommerce.model.Order
 import ecommerce.model.OrderItem
 import ecommerce.model.Payment
+import ecommerce.repository.MemberRepository
 import ecommerce.repository.PaymentRepository
 import org.apache.coyote.BadRequestException
 import org.assertj.core.api.Assertions.assertThat
@@ -37,10 +39,23 @@ class CheckoutServiceTest {
     @Autowired
     private lateinit var checkoutService: CheckoutService
 
+    @Autowired
+    private lateinit var memberRepository: MemberRepository
+
     @Test
     fun `successfully checkout `() {
-        val member = RegisteredMember(1L, "test@email.com", Role.USER)
+        val memberDto = RegisteredMember(1L, "test@email.com", Role.USER)
         val request = CheckoutRequest(1L, 1000L, "eur", "pm_card_visa")
+
+        val member =
+            memberRepository.save(
+                Member(
+                    email = "test@email.com",
+                    name = "test",
+                    password = "guri_I_hate_test!",
+                    role = Role.USER.name,
+                ),
+            )
 
         val mockOrder =
             mock<Order> {
@@ -51,12 +66,12 @@ class CheckoutServiceTest {
         val paymentIntent = PaymentIntent("pi_guri_cute_id", 1000L, "succeeded", "eur", "pm_card_visa", "secret", 123L)
         val payment = Payment(1000L, "eur", "pm_card_visa", "pi_guri_cute_id", "secret", "succeeded")
 
-        whenever(orderService.createOrder(member.id)).thenReturn(mockOrder)
+        whenever(orderService.createOrder(memberDto.id)).thenReturn(mockOrder)
         whenever(orderService.save(mockOrder)).thenReturn(mockOrder)
         whenever(stripeClient.makePayment(request)).thenReturn(paymentIntent)
         whenever(paymentRepository.save(any<Payment>())).thenReturn(payment)
 
-        val result = checkoutService.checkout(member, request)
+        val result = checkoutService.checkout(memberDto, request)
 
         assertThat(result.orderId).isEqualTo(1L)
         assertThat(result.paymentStatus).isEqualTo("succeeded")
@@ -91,7 +106,8 @@ class CheckoutServiceTest {
                 "secret",
                 16648303L,
             )
-        val savedPayment = Payment(1500L, "eur", "pm_card_mastercard", "pi_guri_cute_id", "secret", "requires_confirmation", id = 1L)
+        val savedPayment =
+            Payment(1500L, "eur", "pm_card_mastercard", "pi_guri_cute_id", "secret", "requires_confirmation", id = 1L)
 
         whenever(stripeClient.makePayment(request)).thenReturn(paymentIntent)
         whenever(paymentRepository.save(any<Payment>())).thenReturn(savedPayment)

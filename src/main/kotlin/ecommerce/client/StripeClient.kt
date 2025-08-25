@@ -18,6 +18,7 @@ class StripeClient(private val stripeProperties: StripeProperties) {
                 "amount=${request.amount}",
                 "currency=${request.currency}",
                 "payment_method=${request.paymentMethod}",
+                // TODO: confirm(true),
                 "automatic_payment_methods[enabled]=true",
                 "automatic_payment_methods[allow_redirects]=never",
             ).joinToString("&")
