@@ -84,7 +84,6 @@ class TokenLoginControllerTest {
 
     @Test
     fun `test registering already existent member`() {
-
         val body = TokenRequest(BasicTestFixture.JIN.email, BasicTestFixture.JIN.password)
         val response = registerRequest(body)
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CONFLICT.value())
