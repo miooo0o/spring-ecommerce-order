@@ -47,6 +47,17 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(
         value = [
+            StripeException.Server::class,
+            StripeException.Other::class,
+        ],
+    )
+    fun handleServiceUnavailable(e: NotFoundException): ResponseEntity<ErrorResponse> {
+        return buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, e.message)
+    }
+
+    @ExceptionHandler(
+        value = [
+            StripeException.Client::class,
             RuntimeException::class,
             IllegalArgumentException::class,
             ProcessingException::class,
