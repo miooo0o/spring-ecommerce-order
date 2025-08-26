@@ -5,12 +5,22 @@ import ecommerce.dto.PaymentIntent
 import ecommerce.exception.StripePaymentException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import java.time.Duration
 
 @Component
 class StripeClient(private val stripeProperties: StripeProperties) {
-    private val restClient = RestClient.create()
+    private val restClient =
+        RestClient.builder()
+            .requestFactory(
+                SimpleClientHttpRequestFactory().apply {
+                    setConnectTimeout(Duration.ofMillis(500))
+                    setReadTimeout(Duration.ofSeconds(10))
+                },
+            )
+            .build()
 
     fun makePayment(request: CheckoutRequest): PaymentIntent {
         val body =
@@ -18,7 +28,6 @@ class StripeClient(private val stripeProperties: StripeProperties) {
                 "amount=${request.amount}",
                 "currency=${request.currency}",
                 "payment_method=${request.paymentMethod}",
-                // TODO: confirm(true),
                 "automatic_payment_methods[enabled]=true",
                 "automatic_payment_methods[allow_redirects]=never",
             ).joinToString("&")
