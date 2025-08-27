@@ -27,8 +27,8 @@ class StripeClient(private val stripeProperties: StripeProperties) {
         RestClient.builder()
             .requestFactory(
                 SimpleClientHttpRequestFactory().apply {
-                    setConnectTimeout(Duration.ofMillis(500))
-                    setReadTimeout(Duration.ofSeconds(10))
+                    setConnectTimeout(Duration.ofSeconds(30))
+                    setReadTimeout(Duration.ofSeconds(80))
                 },
             )
             .build()
