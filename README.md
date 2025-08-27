@@ -32,14 +32,17 @@ nohup java -jar $DEPLOY_PATH$JAR_NAME > ./application.log 2>&1 &
 
 #### Step 2, Second: Code Review applies
 #### Configuration & Setup
-- [ ] Move `@EnableConfigurationProperties(StripeProperties::class)` annotation...
+- [x] Move `@EnableConfigurationProperties(StripeProperties::class)` annotation...
 - [x] Add shell script for deployment
 
 #### StripeClient Improvements
-- [x] Configure timeouts for RestClient (connect timeout: 500ms, read timeout: 10s)
+- [x] Configure timeouts for RestClient
+  - [x] Reference: official docs 30sec/80sec
 - [x] Implement detailed exception handling following Stripe documentation
-  - [x] Parse Stripe error response body into `StripeErrorInfo`
-  - [x] Create specific exception types for different Stripe error scenarios
+  - [x] HttpException to StripeException
+  - [x] Parsing message depends on each exception group
+    - [x] Parse Stripe error response body into `StripeErrorInfo`
+    - [x] Create specific exception types for different Stripe error scenarios
 
 #### Transaction Management
 - [x] Review external API call within transaction in `CheckoutService`
