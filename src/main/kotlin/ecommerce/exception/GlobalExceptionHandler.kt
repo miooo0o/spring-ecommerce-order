@@ -47,8 +47,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(
         value = [
-            StripeException.Server::class,
-            StripeException.Other::class,
+            StripeApiException.Server::class,
+            StripeApiException.Other::class,
         ],
     )
     fun handleServiceUnavailable(e: NotFoundException): ResponseEntity<ErrorResponse> {
@@ -57,10 +57,10 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(
         value = [
-            StripeException.Client::class,
             RuntimeException::class,
             IllegalArgumentException::class,
             ProcessingException::class,
+            StripeApiException.Client::class,
         ],
     )
     fun handleBadRequest(e: Exception): ResponseEntity<ErrorResponse> {

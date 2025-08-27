@@ -1,16 +1,23 @@
 package ecommerce.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.stripe.exception.ApiConnectionException
+import com.stripe.exception.ApiException
+import com.stripe.exception.AuthenticationException
+import com.stripe.exception.CardException
+import com.stripe.exception.IdempotencyException
+import com.stripe.exception.InvalidRequestException
+import com.stripe.exception.PermissionException
+import com.stripe.exception.RateLimitException
+import com.stripe.exception.SignatureVerificationException
+import com.stripe.exception.StripeException
 import ecommerce.dto.CheckoutRequest
 import ecommerce.dto.PaymentIntent
 import ecommerce.dto.StripeErrorInfo
-import ecommerce.exception.StripeException
+import ecommerce.exception.StripeApiException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClient
 import java.time.Duration
 
@@ -47,33 +54,69 @@ class StripeClient(private val stripeProperties: StripeProperties) {
                     .toEntity(PaymentIntent::class.java)
 
             val paymentIntent = requireNotNull(response.body)
-
             validatePaymentIntent(request, paymentIntent)
+
             paymentIntent
-        } catch (e: HttpClientErrorException) {
-            throw StripeException.Client(
-                parseStripeError(e.responseBodyAsString),
-                e.cause,
-            )
-        } catch (e: HttpServerErrorException) {
-            throw StripeException.Server(
-                parseStripeError(e.responseBodyAsString),
-                e.cause,
-            )
+        } catch (e: StripeException) {
+            val info = parseStripeError(e)
+            when (e) {
+                is CardException,
+                is PermissionException,
+                is RateLimitException,
+                is InvalidRequestException,
+                is AuthenticationException,
+                is IdempotencyException,
+                is SignatureVerificationException,
+                -> throw StripeApiException.Client(info, e)
+
+                is ApiConnectionException,
+                is ApiException,
+                -> throw StripeApiException.Server(info, e)
+
+                else -> throw StripeApiException.Other(info, e)
+            }
         } catch (e: Exception) {
-            throw StripeException.Other("Stripe error: ${e.message}", e.cause)
+            throw StripeApiException.Other(parseStripeError(e), e)
         }
     }
 
-    fun parseStripeError(json: String?): StripeErrorInfo {
-        return try {
-            val obj = ObjectMapper().readTree(json)
-            StripeErrorInfo(
-                message = obj.get("error").get("message").asText(),
-                code = obj.get("error").get("code").asText(),
-            )
-        } catch (e: Exception) {
-            StripeErrorInfo(message = "Unable to parse Stripe error: ${e.message}")
+    fun parseStripeError(e: Exception): StripeErrorInfo {
+        return when (e) {
+            is CardException ->
+                StripeErrorInfo(
+                    message = e.userMessage,
+                    code = e.code,
+                    type = "card_error",
+                    declineCode = e.declineCode,
+                    charge = e.charge,
+                )
+
+            is InvalidRequestException ->
+                StripeErrorInfo(
+                    message = e.userMessage,
+                    code = e.code,
+                    type = "invalid_request_error",
+                    param = e.param,
+                )
+
+            is AuthenticationException ->
+                StripeErrorInfo(
+                    message = e.userMessage,
+                    code = e.code,
+                    type = "authentication_error",
+                )
+
+            is StripeException ->
+                StripeErrorInfo(
+                    message = e.userMessage ?: "Stripe error occurred",
+                    code = e.code,
+                    requestId = e.requestId,
+                )
+
+            else ->
+                StripeErrorInfo(
+                    message = e.message ?: "Unknown Stripe error occurred",
+                )
         }
     }
 

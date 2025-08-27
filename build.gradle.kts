@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.stripe:stripe-java:24.16.0")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
